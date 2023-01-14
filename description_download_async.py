@@ -1,6 +1,7 @@
 import asyncio
 import aiohttp
 import pandas as pd
+import numpy as np
 
 file_name="Prague_apartments_sale_2023-01-14.gzip"
 
