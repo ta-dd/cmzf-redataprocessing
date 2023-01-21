@@ -7,7 +7,9 @@ file_name="Prague_apartments_sale_2023-01-14.gzip"
 desc_indices=pd.read_parquet(file_name, columns=["hash_id"])
 desc_indices=desc_indices.drop_duplicates()
 
-urls=["https://www.sreality.cz/api/cs/v2/estates/"+str(i) for i in desc_indices["hash_id"]]
+def urls_from_indices(indices):
+    urls=["https://www.sreality.cz/api/cs/v2/estates/"+str(i) for i in indices["hash_id"]]
+    return urls
 
 async def get_response(session, url):
     try:
@@ -36,6 +38,7 @@ async def main(urls, chunk_size):
             all_responses=all_responses+responses
         return all_responses
 
+urls=urls_from_indices(desc_indices)
 loop=asyncio.new_event_loop()
 my_resp=loop.run_until_complete(main(urls, 5))
 loop.close()
