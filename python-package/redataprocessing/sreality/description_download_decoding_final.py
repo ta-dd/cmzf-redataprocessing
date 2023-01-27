@@ -5,11 +5,13 @@ import sqlite3
 
 import asyncio
 import aiohttp
+import ssl
+import certifi
 
 import nest_asyncio
 
 #loading dictionary for values that are stored in API request of offer description
-from sreality_api_dictionaries import items_dict
+from sreality_api_dictionaries import description_items_dict
 
 # %%
 # INPUTS
@@ -21,12 +23,24 @@ path_to_sqlite='estate_data.sqlite'
 # preparation of urls for async
 def getting_offers_without_downloaded_description(path_to_sqlite):
     con = sqlite3.connect(path_to_sqlite)
-    # https://stackoverflow.com/questions/14818736/in-sqlite-how-do-i-select-elements-in-one-table-that-are-not-in-other
-    indices = pd.read_sql("SELECT hash_id FROM OFFERS_TABLE WHERE hash_id not in (SELECT hash_id FROM DESCRIPTION_TABLE)")
-    con.close()
-    return indices
 
-indices=getting_offers_without_downloaded_description(path_to_sqlite)
+    c = con.cursor()
+
+    # checking if db exists
+    c.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='DESCRIPTION_TABLE' ''')
+    
+    # loading indices for which no description was downloaded
+    if c.fetchone()[0]==1:
+        # if table DESCRIPTION_TABLE exists
+        indices = pd.read_sql("SELECT hash_id FROM OFFERS_TABLE WHERE hash_id not in (SELECT hash_id FROM DESCRIPTION_TABLE)", con=con)
+    else:
+        # loading descriptions for the first time - table DESCRIPTION_TABLE does not exist
+        indices = pd.read_sql("SELECT hash_id FROM OFFERS_TABLE", con=con)
+    c.close()
+    con.close()
+
+    indices=indices["hash_id"]
+    return indices
 
 def urls_from_indices(indices):
     urls=["https://www.sreality.cz/api/cs/v2/estates/"+str(i) for i in indices]
@@ -35,9 +49,9 @@ def urls_from_indices(indices):
 # async download
 nest_asyncio.apply()
 
-async def get_response(session, url):
+async def get_response(session, url, sslcontext):
     try:
-        async with session.get(url) as response:
+        async with session.get(url, ssl=sslcontext) as response:
             response_text =  await response.json()
             #here response can be processed further
             return response_text
@@ -48,11 +62,14 @@ async def main(urls, chunk_size):
     async with aiohttp.ClientSession() as session: 
         all_responses=[]
         chunks = [urls[i:i+chunk_size] for i in range(0, len(urls), chunk_size)]
+
+        sslcontext = ssl.create_default_context(cafile=certifi.where())
+
         for chunk_idx, chunk in enumerate(chunks):
             print(f'running chunk {chunk_idx+1} out of {len(chunks)} chunks ({chunk_size} items)')
             #here you process first batch -> request go async
 
-            tasks = [get_response(session, url) for url in chunk]
+            tasks = [get_response(session, url, sslcontext) for url in chunk]
             #here they come together
             responses = await asyncio.gather(*tasks)
             
@@ -61,21 +78,20 @@ async def main(urls, chunk_size):
             all_responses=all_responses+responses
         return all_responses # returns list
 
-urls=urls_from_indices(indices)
-
-loop = asyncio.get_event_loop()
-output_list = loop.run_until_complete(main(urls, 5)) # len(output) = 20
-
-# %%
-# Getting rid of NaN rows
-output_list = [i for i in output_list if i not in [item for item in output_list if len(item) == 1]]
+def get_responses(urls, workers=5):
+        loop = asyncio.get_event_loop()
+        output_list = loop.run_until_complete(main(urls, workers)) # len(output) = 20
+        
+        # Getting rid of NaN rows
+        output_list = [i for i in output_list if i not in [item for item in output_list if len(item) == 1]]
+        return output_list
 
 # %%
 # preparation of functions for decoding
 
 def note_missing_values(r_dict_names_all):
-        print("Add these values to your dictionary:")
-        print(r_dict_names_all[~r_dict_names_all.isin(items_dict.keys())])
+        print("Add these values to description_items_dict in sreality_api_dictionaries.py:")
+        print(r_dict_names_all[~r_dict_names_all.isin(description_items_dict.keys())])
 
 def individual_description_into_pd_df(description_individual):
         df_desc = pd.concat(description_individual).unstack()
@@ -104,9 +120,9 @@ def description_decoding(responses_list):
                 r_dict_types=r_dict_values[["type", "name"]]
                 r_dict_types_all=pd.concat([r_dict_types_all, r_dict_types.loc[~r_dict_types["name"].isin(r_dict_types_all["name"]),:]])
 
-                for name_raw in items_dict.keys():
+                for name_raw in description_items_dict.keys():
 
-                        name_clean=items_dict[name_raw]
+                        name_clean=description_items_dict[name_raw]
 
                         if name_raw not in r_dict_names.values:
                                 info_relevant[name_clean]=np.nan
@@ -125,8 +141,6 @@ def description_decoding(responses_list):
 
         return df_final
 
-df = description_decoding(output_list)
-
 # %% [markdown]
 # save of description data to SQLite
 
@@ -137,14 +151,35 @@ def transformer(value):
 
 columns_w_list = ["transport", "electricity", "traffic_communication", "water", "gas", "waste", "heating", "telecommunication"]
 
-def save_re_offers_description(df, path_to_sqlite, columns_w_list=columns_w_list):
+def save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list):
     
     for column in columns_w_list:
         df[column] = df.apply(lambda row: transformer(row[column]), axis = 1)
 
     # Creates a table or appends if exists
     con = sqlite3.connect(path_to_sqlite)
-    df.to_sql(name = 'DESCRIPTION_TABLE', con = con, index = False, if_exists = 'append')
+    
+    # addition of columns that are not in DESCRIPTION_TABLE
+    #c=con.cursor()
+    #d=c.execute("PRAGMA table_info(DESCRIPTION_TABLE)")
+    #list_of_colnames=d.fetchall()[0]
+
+    #for i in df.columns:
+    #    if i not in list_of_colnames:
+    #            c.execute("ALTER TABLE DESCRIPTION_TABLE ADD {} VARCHAR;".format(i))
+
+    #df.to_sql(name = 'DESCRIPTION_TABLE', con = con, index = False, if_exists = 'append')
 
     # Closing the connection
     con.close()
+
+def get_re_offers_description(path_to_sqlite, columns_w_list=columns_w_list):
+        
+        indices=getting_offers_without_downloaded_description(path_to_sqlite)
+        urls=urls_from_indices(indices)
+        output_list=get_responses(urls, workers=5)
+        df = description_decoding(output_list)
+
+        save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list)
+
+get_re_offers_description(path_to_sqlite, columns_w_list=columns_w_list)

@@ -1,10 +1,12 @@
-# %%
 # importing all packages
 import pandas as pd
 import numpy as np
 
 import requests
 import sqlite3
+import sys
+import certifi
+import os
 
 from datetime import date
 from time import sleep 
@@ -13,7 +15,6 @@ from random import randint
 from typing import Dict, List 
 import re 
 
-# %%
 # INPUTS
 
 path_to_sqlite='estate_data.sqlite'
@@ -23,10 +24,8 @@ category_type_cb = 1 # 1=prodej, 2=nájem, 3=dražba
 category_sub_cb = [] # 34=garáže, 52=garážové stání
 locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
-# %% [markdown]
 # requesting information from sreality api
 
-# %%
 def download_lists(category_main_cb, category_type_cb, category_sub_cb, locality_region_id):
 
     category_sub_cb_string = '%7C'.join(str(v) for v in category_sub_cb)
@@ -36,14 +35,17 @@ def download_lists(category_main_cb, category_type_cb, category_sub_cb, locality
     i=0
     run=True
 
+    # solving issues with ssl requests (OSError: Could not find a suitable TLS CA certificate bundle, invalid path: /etc/ssl/certs/ca-certificates.crt)
+    os.environ['REQUESTS_CA_BUNDLE'] = os.path.join(os.path.dirname(sys.argv[0]), certifi.where())
+
     while run==True:
         
         if len(category_sub_cb)>0:
             base_url = 'https://www.sreality.cz/api/cs/v2/estates?category_main_cb={}&category_sub_cb={}category_type_cb={}&locality_region_id={}&per_page60&page={}'.format(category_main_cb, category_sub_cb_string, category_type_cb, locality_region_id_string, i)
         else:
             base_url = 'https://www.sreality.cz/api/cs/v2/estates?category_main_cb={}&category_type_cb={}&locality_region_id={}&per_page60&page={}'.format(category_main_cb, category_type_cb, locality_region_id_string, i)
-        
-        r = requests.get(base_url)
+    
+        r = requests.get(base_url, verify= True)
         print("starting sleep")
         sleep(randint(1,3))
 
@@ -71,8 +73,6 @@ def download_lists(category_main_cb, category_type_cb, category_sub_cb, locality
                 j=j+1
     return collector
 
-
-# %%
 # preparation of functions for decoding
 
 def get_gps_lat_lon(estate_raw: Dict):
@@ -94,7 +94,6 @@ def get_company_details(estate_raw: Dict):
 
     return company_id, company_name
 
-# %%
 # wrapping up all decoding
 
 def decode_collector(collector):
@@ -138,8 +137,6 @@ def decode_collector(collector):
     
     return df
 
-
-# %% [markdown]
 # creating ultimated function for downloading and transforming into pandas df
 def download_re_offers(category_main_cb, 
     category_type_cb, 
@@ -155,12 +152,6 @@ def download_re_offers(category_main_cb,
 
     return df
 
-df=download_re_offers(category_main_cb=category_main_cb, 
-    category_type_cb=category_type_cb, 
-    category_sub_cb=category_sub_cb, 
-    locality_region_id=locality_region_id)
-
-# %% [markdown]
 # Saving data (SQLite)
 
 def save_re_offers(df, path_to_sqlite):
@@ -173,10 +164,17 @@ def save_re_offers(df, path_to_sqlite):
     # Closing the connection
     con.close()
 
-save_re_offers(df, path_to_sqlite=path_to_sqlite)
+def get_re_offers(path_to_sqlite, category_main_cb, category_type_cb, category_sub_cb, locality_region_id):
+    
+    df=download_re_offers(category_main_cb=category_main_cb, 
+    category_type_cb=category_type_cb, 
+    category_sub_cb=category_sub_cb, 
+    locality_region_id=locality_region_id)
 
+    save_re_offers(df, path_to_sqlite=path_to_sqlite)
 
-
-
-
-
+get_re_offers(path_to_sqlite=path_to_sqlite, 
+    category_main_cb=category_main_cb, 
+    category_type_cb=category_type_cb, 
+    category_sub_cb=category_sub_cb, 
+    locality_region_id=locality_region_id)

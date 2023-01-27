@@ -25,7 +25,7 @@ locality_region_id_dict={10:"Praha", 11:"Středočeský kraj", 5:"Liberecký kra
 #locality_region_id_dict=pd.DataFrame.from_dict(locality_region_id_dict, orient="index", columns=["locality_region_id"])
 #print(locality_region_id_dict)
 
-items_dict={"Zlevněno":"discounted", 
+description_items_dict={"Zlevněno":"discounted", 
     "Původní cena":"price_original", 
     "ID zakázky":"id_order", 
     "Aktualizace":"date_update", 
@@ -62,6 +62,9 @@ items_dict={"Zlevněno":"discounted",
     "Ukazatel energetické náročnosti budovy":"energy_efficient_rating_index", 
     "Datum prohlídky":"date_tour", 
     "Datum prohlídky do":"date_tour_to", 
+    "Termín 1. prohlídky":"date_tour_first",
+    "Termín 2. prohlídky":"date_tour_second",
+    "Termín 3. prohlídky":"date_tour_third",
     "Plocha zahrady":"area_garden",
     "Výška stropu":"ceiling_height",
     "Parkování":"parking",
