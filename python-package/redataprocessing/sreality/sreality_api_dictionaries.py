@@ -6,6 +6,8 @@ category_main_cb_dict={1:"byty", 2:"domy", 3:"pozemky", 4:"komerční", 5:"ostat
 #category_main_cb_dict=pd.DataFrame.from_dict(category_main_cb_dict, orient="index", columns=["category_main_cb"])
 #print(category_main_cb_dict)
 
+db_table_names={1:"APARTMENTS", 2:"HOUSES", 3:"LANDPLOTS", 4:"COMMERCIAL", 5:"OTHERS"}
+
 category_sub_cb_dict={
     2:"1+kk", 
     3:"1+1", 
