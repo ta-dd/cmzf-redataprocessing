@@ -160,15 +160,15 @@ def save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list):
     con = sqlite3.connect(path_to_sqlite)
     
     # addition of columns that are not in DESCRIPTION_TABLE
-    #c=con.cursor()
-    #d=c.execute("PRAGMA table_info(DESCRIPTION_TABLE)")
-    #list_of_colnames=d.fetchall()[0]
+    c=con.cursor()
+    d=c.execute("PRAGMA table_info(DESCRIPTION_TABLE)")
+    list_of_colnames=d.fetchall()[0]
 
-    #for i in df.columns:
-    #    if i not in list_of_colnames:
-    #            c.execute("ALTER TABLE DESCRIPTION_TABLE ADD {} VARCHAR;".format(i))
+    for i in df.columns:
+        if i not in list_of_colnames:
+                c.execute("ALTER TABLE DESCRIPTION_TABLE ADD {} VARCHAR;".format(i))
 
-    #df.to_sql(name = 'DESCRIPTION_TABLE', con = con, index = False, if_exists = 'append')
+    df.to_sql(name = 'DESCRIPTION_TABLE', con = con, index = False, if_exists = 'append')
 
     # Closing the connection
     con.close()
