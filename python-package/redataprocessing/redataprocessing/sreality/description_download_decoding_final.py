@@ -147,14 +147,17 @@ def description_decoding(responses_list):
 # We transform columns with list so we could save to DB
 def transformer(value):
     if type(value) == list:
-        return value[0]['value']
+        string = ""
+        for i in value:
+            string += i['value'] + "  "
+        return string[:-2]
 
 columns_w_list = ["transport", "electricity", "traffic_communication", "water", "gas", "waste", "heating", "telecommunication"]
 
 def save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list):
     
     for column in columns_w_list:
-        df[column] = df.apply(lambda row: transformer(row[column]), axis = 1)
+        df[column] = df[column].apply(lambda row: transformer(row))
 
     # Creates a table or appends if exists
     con = sqlite3.connect(path_to_sqlite)

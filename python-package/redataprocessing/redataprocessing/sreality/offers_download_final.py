@@ -85,7 +85,7 @@ def download_lists(category_main_cb, category_type_cb, category_sub_cb, locality
 def get_gps_lat_lon(estate_raw: Dict):
     gps_ = estate_raw['gps']
     return gps_['lat'], gps_['lon']
-
+  
 def get_area_from_name(name: str):
     name_ = re.sub("m2", "", name)
     name_ = name_.split()
