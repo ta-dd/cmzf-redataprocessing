@@ -4,9 +4,10 @@
 
 def category_main_cb_dict():
     dict={1:"byty", 2:"domy", 3:"pozemky", 4:"komerční", 5:"ostatní"}
-    #category_main_cb_dict=pd.DataFrame.from_dict(category_main_cb_dict, orient="index", columns=["category_main_cb"])
-    #print(category_main_cb_dict)
     return(dict)
+
+#category_main_cb_dict=pd.DataFrame.from_dict(category_main_cb_dict, orient="index", columns=["category_main_cb"])
+#print(category_main_cb_dict)
 
 def db_table_names_main():
     dict={1:"APARTMENTS", 2:"HOUSES", 3:"LANDPLOTS", 4:"COMMERCIAL", 5:"OTHERS"}
@@ -31,8 +32,10 @@ def category_type_cb_dict():
     #print(category_type_cb_dict)
     return(dict)
 
-def db_table_names_sub():
-    dict={1:"SELL", 2:"RENT", 3:"AUCTION"}
+def category_type_cb_dict2():
+    dict={1:"sale", 2:"rent", 3:"auction"}
+    #category_type_cb_dict=pd.DataFrame.from_dict(category_type_cb_dict, orient="index", columns=["category_type_cb"])
+    #print(category_type_cb_dict)
     return(dict)
 
 def locality_region_id_dict():
