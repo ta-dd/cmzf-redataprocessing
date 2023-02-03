@@ -26,6 +26,23 @@ locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj,
 # requesting information from sreality api
 
 def download_lists(category_main_cb, category_type_cb, category_sub_cb, locality_region_id):
+    """
+
+    Parameters
+    ----------
+    category_main_cb :
+        
+    category_type_cb :
+        
+    category_sub_cb :
+        
+    locality_region_id :
+        
+
+    Returns
+    -------
+
+    """
 
     category_sub_cb_string = '%7C'.join(str(v) for v in category_sub_cb)
     locality_region_id_string = '%7C'.join(str(v) for v in locality_region_id)
@@ -83,15 +100,48 @@ def download_lists(category_main_cb, category_type_cb, category_sub_cb, locality
 # preparation of functions for decoding
 
 def get_gps_lat_lon(estate_raw: Dict):
+    """
+
+    Parameters
+    ----------
+    estate_raw: Dict :
+        
+
+    Returns
+    -------
+
+    """
     gps_ = estate_raw['gps']
     return gps_['lat'], gps_['lon']
   
 def get_area_from_name(name: str):
+    """
+
+    Parameters
+    ----------
+    name: str :
+        
+
+    Returns
+    -------
+
+    """
     name_ = re.sub("m2", "", name)
     name_ = name_.split()
     return int(''.join(re.findall('(\d*)', ''.join(name_))))
 
 def get_company_details(estate_raw: Dict):
+    """
+
+    Parameters
+    ----------
+    estate_raw: Dict :
+        
+
+    Returns
+    -------
+
+    """
     try:
             company_id = estate_raw["_embedded"]["company"]["id"]
             company_name = estate_raw["_embedded"]["company"]["name"]
@@ -104,6 +154,17 @@ def get_company_details(estate_raw: Dict):
 # wrapping up all decoding
 
 def decode_collector(collector):
+    """
+
+    Parameters
+    ----------
+    collector :
+        
+
+    Returns
+    -------
+
+    """
     estates_individual = {}
 
     for page, r in collector.items():
@@ -149,6 +210,23 @@ def download_re_offers(category_main_cb,
     category_type_cb, 
     category_sub_cb, 
     locality_region_id):
+    """
+
+    Parameters
+    ----------
+    category_main_cb :
+        
+    category_type_cb :
+        
+    category_sub_cb :
+        
+    locality_region_id :
+        
+
+    Returns
+    -------
+
+    """
 
     collector=download_lists(category_main_cb=category_main_cb, 
     category_type_cb=category_type_cb, 
@@ -162,6 +240,19 @@ def download_re_offers(category_main_cb,
 # Saving data (SQLite)
 
 def save_re_offers(df, path_to_sqlite):
+    """
+
+    Parameters
+    ----------
+    df :
+        
+    path_to_sqlite :
+        
+
+    Returns
+    -------
+
+    """
     con = sqlite3.connect(path_to_sqlite) # We must choose the name for our DB !
 
     # Creates a table or appends if exists
@@ -172,6 +263,25 @@ def save_re_offers(df, path_to_sqlite):
     con.close()
 
 def get_re_offers(path_to_sqlite, category_main_cb, category_type_cb, category_sub_cb, locality_region_id):
+    """
+
+    Parameters
+    ----------
+    path_to_sqlite :
+        
+    category_main_cb :
+        
+    category_type_cb :
+        
+    category_sub_cb :
+        
+    locality_region_id :
+        
+
+    Returns
+    -------
+
+    """
     
     df=download_re_offers(category_main_cb=category_main_cb, 
     category_type_cb=category_type_cb, 
