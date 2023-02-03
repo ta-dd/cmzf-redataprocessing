@@ -10,14 +10,8 @@ import certifi
 
 import nest_asyncio
 
-#loading dictionary for values that are stored in API request of offer description
-from sreality_api_dictionaries import description_items_dict
-
-# %%
-# INPUTS
 path_to_sqlite='estate_data.sqlite'
 
-# %%
 # async download of offer description
 
 # preparation of urls for async
