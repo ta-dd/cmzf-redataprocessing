@@ -16,12 +16,12 @@ from typing import Dict, List
 import re 
 
 # INPUTS
-#path_to_sqlite='estate_data.sqlite'
+path_to_sqlite='estate_data.sqlite'
 
-#category_main_cb = 3 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
-#category_type_cb = 1 # 1=prodej, 2=nájem, 3=dražba
-#category_sub_cb = [] # 34=garáže, 52=garážové stání
-#locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+category_main_cb = 3 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+category_type_cb = 1 # 1=prodej, 2=nájem, 3=dražba
+category_sub_cb = [] # 34=garáže, 52=garážové stání
+locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
 # requesting information from sreality api
 
