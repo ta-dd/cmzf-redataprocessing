@@ -10,7 +10,7 @@ import certifi
 
 import nest_asyncio
 
-from Python-package.redataprocessing.redataprocessing.sreality.sreality_api_dictionaries import description_items_dict
+from sreality_api_dictionaries import description_items_dict
 
 path_to_sqlite='estate_data.sqlite'
 
