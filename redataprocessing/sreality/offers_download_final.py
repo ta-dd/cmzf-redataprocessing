@@ -16,8 +16,9 @@ from typing import Dict
 import re 
 
 from sreality.sreality_api_dictionaries import description_items_dict, db_table_names_main, category_main_cb_dict, category_type_cb_dict
-from sreality.sreality_api_dictionaries import category_type_cb_dict
-category_type_cb_dict2()
+from sreality.sreality_api_dictionaries import *
+db_table_names_type()
+
 # INPUTS
 path_to_sqlite='estate_data.sqlite'
 

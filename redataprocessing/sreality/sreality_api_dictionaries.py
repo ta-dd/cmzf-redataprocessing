@@ -32,10 +32,8 @@ def category_type_cb_dict():
     #print(category_type_cb_dict)
     return(dict)
 
-def category_type_cb_dict2():
-    dict={1:"sale", 2:"rent", 3:"auction"}
-    #category_type_cb_dict=pd.DataFrame.from_dict(category_type_cb_dict, orient="index", columns=["category_type_cb"])
-    #print(category_type_cb_dict)
+def db_table_names_type():
+    dict={1:"SALE", 2:"RENT", 3:"AUCTION"}
     return(dict)
 
 def locality_region_id_dict():
