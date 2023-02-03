@@ -10,11 +10,11 @@ import certifi
 
 import nest_asyncio
 
+from sreality_api_dictionaries import description_items_dict
+
 path_to_sqlite='estate_data.sqlite'
 
 # async download of offer description
-
-from sreality_api_dictionaries import description_items_dict
 
 # preparation of urls for async
 def getting_offers_without_downloaded_description(path_to_sqlite):
