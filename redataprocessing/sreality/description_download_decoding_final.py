@@ -10,9 +10,9 @@ import certifi
 
 import nest_asyncio
 
-from sreality.sreality_api_dictionaries import description_items_dict
+from sreality_api_dictionaries import *
 
-path_to_sqlite='estate_data.sqlite'
+#path_to_sqlite='estate_data.sqlite'
 
 # async download of offer description
 
@@ -227,8 +227,6 @@ def transformer(value):
             string += i['value'] + "  "
         return string[:-2]
 
-columns_w_list = ["transport", "electricity", "traffic_communication", "water", "gas", "waste", "heating", "telecommunication"]
-
 def save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list):
     """
 
@@ -252,21 +250,25 @@ def save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list):
     # Creates a table or appends if exists
     con = sqlite3.connect(path_to_sqlite)
     
-    # addition of columns that are not in DESCRIPTION_TABLE
+    db_table_name=create_db_table_name(category_main_cb, category_type_cb)
+    db_table_name_description="DESCRIPTION_"+db_table_name
+
+    # addition of columns that are not in description table
     c=con.cursor()
-    d=c.execute("PRAGMA table_info(DESCRIPTION_TABLE)")
+    pragma_line="PRAGMA table_info({})".format(db_table_name_description)
+    d=c.execute(pragma_line)
     list_of_colnames=d.fetchall()[0]
 
     for i in df.columns:
         if i not in list_of_colnames:
-                c.execute("ALTER TABLE DESCRIPTION_TABLE ADD {} VARCHAR;".format(i))
+                c.execute("ALTER TABLE {} ADD {} VARCHAR(100);".format(db_table_name_description, i))
 
-    df.to_sql(name = 'DESCRIPTION_TABLE', con = con, index = False, if_exists = 'append')
+    df.to_sql(name = db_table_name_description, con = con, index = False, if_exists = 'append')
 
     # Closing the connection
     con.close()
 
-def get_re_offers_description(path_to_sqlite, columns_w_list=columns_w_list):
+def get_re_offers_description(path_to_sqlite):
     """
 
     Parameters
@@ -287,5 +289,3 @@ def get_re_offers_description(path_to_sqlite, columns_w_list=columns_w_list):
     df = description_decoding(output_list)
 
     save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list)
-
-get_re_offers_description(path_to_sqlite, columns_w_list=columns_w_list)

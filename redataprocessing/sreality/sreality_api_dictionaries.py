@@ -103,3 +103,9 @@ def description_items_dict():
     "Dražební vyhláška":"auction_decree",
     "Posudek znalce":"expert_opinion"}
     return dict
+
+columns_w_list = ["transport", "electricity", "traffic_communication", "water", "gas", "waste", "heating", "telecommunication"]
+
+def create_db_table_name(category_main_cb, category_type_cb):
+    db_table_name=db_table_names_main()[category_main_cb] + "_"+ db_table_names_type()[category_type_cb]
+    return(db_table_name)

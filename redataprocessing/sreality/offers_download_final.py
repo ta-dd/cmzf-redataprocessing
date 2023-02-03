@@ -15,30 +15,30 @@ from random import randint
 from typing import Dict
 import re 
 
-from sreality.sreality_api_dictionaries import description_items_dict, db_table_names_main, category_main_cb_dict, category_type_cb_dict
-from sreality.sreality_api_dictionaries import *
-db_table_names_type()
+from sreality_api_dictionaries import *
+from description_download_decoding_final import *
+
 
 # INPUTS
-path_to_sqlite='estate_data.sqlite'
+#path_to_sqlite='estate_data.sqlite'
 
-category_main_cb = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
-category_type_cb = 1 # 1=prodej, 2=nájem, 3=dražba
-category_sub_cb = [] # 34=garáže, 52=garážové stání
-locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+#category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+#category_type = 1 # 1=prodej, 2=nájem, 3=dražba
+#category_sub = [] # 34=garáže, 52=garážové stání
+#locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
 # requesting information from sreality api
 
-def download_lists(category_main_cb, category_type_cb, category_sub_cb, locality_region_id):
+def download_lists(category_main, category_type, category_sub, locality_region_id):
     """
 
     Parameters
     ----------
-    category_main_cb :
+    category_main :
         
-    category_type_cb :
+    category_type :
         
-    category_sub_cb :
+    category_sub :
         
     locality_region_id :
         
@@ -48,7 +48,7 @@ def download_lists(category_main_cb, category_type_cb, category_sub_cb, locality
 
     """
 
-    category_sub_cb_string = '%7C'.join(str(v) for v in category_sub_cb)
+    category_sub_string = '%7C'.join(str(v) for v in category_sub)
     locality_region_id_string = '%7C'.join(str(v) for v in locality_region_id)
 
     collector={}
@@ -62,14 +62,14 @@ def download_lists(category_main_cb, category_type_cb, category_sub_cb, locality
         
         base_url = "https://www.sreality.cz/api/cs/v2/estates"
         
-        params={"category_main_cb":category_main_cb,
-            "category_type_cb":category_type_cb,
+        params={"category_main_cb":category_main,
+            "category_type_cb":category_type,
             "locality_region_id":locality_region_id_string,
             "per_page":60,
             "page":i}
             
-        if len(category_sub_cb)>0:
-            params=params|{"category_sub_cb":category_sub_cb_string}
+        if len(category_sub)>0:
+            params=params|{"category_sub_cb":category_sub_string}
 
 
         r = requests.get(base_url, params=params, verify= True)
@@ -191,9 +191,9 @@ def decode_collector(collector):
             estate_relevant['is_auction'] = estate['is_auction']
             estate_relevant['exclusively_at_rk'] = estate['exclusively_at_rk']
 
-            estate_relevant['category_main_cb'] = estate["seo"]["category_main_cb"]
-            estate_relevant['category_sub_cb'] = estate["seo"]["category_sub_cb"]
-            estate_relevant['category_type_cb'] = estate["seo"]["category_type_cb"]
+            estate_relevant['category_main'] = estate["seo"]["category_main"]
+            estate_relevant['category_sub'] = estate["seo"]["category_sub"]
+            estate_relevant['category_type'] = estate["seo"]["category_type"]
 
             company_id, company_name = get_company_details(estate)
             estate_relevant['company_id'] = company_id
@@ -210,19 +210,19 @@ def decode_collector(collector):
     return df
 
 # creating ultimated function for downloading and transforming into pandas df
-def download_re_offers(category_main_cb, 
-    category_type_cb, 
-    category_sub_cb, 
+def download_re_offers(category_main, 
+    category_type, 
+    category_sub, 
     locality_region_id):
     """
 
     Parameters
     ----------
-    category_main_cb :
+    category_main :
         
-    category_type_cb :
+    category_type :
         
-    category_sub_cb :
+    category_sub :
         
     locality_region_id :
         
@@ -232,9 +232,9 @@ def download_re_offers(category_main_cb,
 
     """
 
-    collector=download_lists(category_main_cb=category_main_cb, 
-    category_type_cb=category_type_cb, 
-    category_sub_cb=category_sub_cb, 
+    collector=download_lists(category_main=category_main, 
+    category_type=category_type, 
+    category_sub=category_sub, 
     locality_region_id=locality_region_id)
 
     df=decode_collector(collector)
@@ -243,11 +243,7 @@ def download_re_offers(category_main_cb,
 
 # Saving data (SQLite)
 
-def create_db_table_name():
-    category_main_cb_dict()[category_main_cb]   
-    category_type_cb_dict()[category_type_cb]
-
-def save_re_offers(df, path_to_sqlite):
+def save_re_offers(df, path_to_sqlite, category_main, category_type):
     """
 
     Parameters
@@ -264,24 +260,27 @@ def save_re_offers(df, path_to_sqlite):
     con = sqlite3.connect(path_to_sqlite) # We must choose the name for our DB !
 
     # Creates a table or appends if exists
-    df.to_sql(name = 'OFFERS_TABLE', con= con, index = False, if_exists = 'append')
+    db_table_name=create_db_table_name(category_main, category_type)
+    db_table_name_offers="OFFERS_"+db_table_name
+
+    df.to_sql(name = db_table_name_offers, con= con, index = False, if_exists = 'append')
     # Loading again: df = pd.read_sql('SELECT * FROM OFFERS_TABLE', con = con)
 
     # Closing the connection
     con.close()
 
-def get_re_offers(path_to_sqlite, category_main_cb, category_type_cb, category_sub_cb, locality_region_id):
+def get_re_offers(path_to_sqlite, category_main, category_type, category_sub, locality_region_id):
     """
 
     Parameters
     ----------
     path_to_sqlite :
         
-    category_main_cb :
+    category_main :
         
-    category_type_cb :
+    category_type :
         
-    category_sub_cb :
+    category_sub :
         
     locality_region_id :
         
@@ -291,15 +290,13 @@ def get_re_offers(path_to_sqlite, category_main_cb, category_type_cb, category_s
 
     """
     
-    df=download_re_offers(category_main_cb=category_main_cb, 
-    category_type_cb=category_type_cb, 
-    category_sub_cb=category_sub_cb, 
+    df=download_re_offers(category_main=category_main, 
+    category_type=category_type, 
+    category_sub=category_sub, 
     locality_region_id=locality_region_id)
 
-    save_re_offers(df, path_to_sqlite=path_to_sqlite)
+    save_re_offers(df, path_to_sqlite, category_main, category_type)
 
-get_re_offers(path_to_sqlite=path_to_sqlite, 
-    category_main_cb=category_main_cb, 
-    category_type_cb=category_type_cb, 
-    category_sub_cb=category_sub_cb, 
-    locality_region_id=locality_region_id)
+    get_re_offers_description(path_to_sqlite, category_main, category_type)
+
+#get_re_offers(path_to_sqlite=path_to_sqlite, category_main=category_main, category_type=category_type, category_sub=category_sub, locality_region_id=locality_region_id)
