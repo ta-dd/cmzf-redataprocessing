@@ -15,6 +15,8 @@ from random import randint
 from typing import Dict, List 
 import re 
 
+from sreality_api_dictionaries import description_items_dict
+
 # INPUTS
 path_to_sqlite='estate_data.sqlite'
 

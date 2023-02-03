@@ -112,6 +112,6 @@ def description_decoding(responses_list):
 
         return df_final
 
-df= description_decoding(my_resp)
+df= description_decoding(responses_list)
 
 df.to_parquet((file_name[:-5]+"_desc.gzip"))

@@ -2,13 +2,18 @@
 
 #import pandas as pd
 
-category_main_cb_dict={1:"byty", 2:"domy", 3:"pozemky", 4:"komerční", 5:"ostatní"}
-#category_main_cb_dict=pd.DataFrame.from_dict(category_main_cb_dict, orient="index", columns=["category_main_cb"])
-#print(category_main_cb_dict)
+def category_main_cb_dict():
+    dict={1:"byty", 2:"domy", 3:"pozemky", 4:"komerční", 5:"ostatní"}
+    #category_main_cb_dict=pd.DataFrame.from_dict(category_main_cb_dict, orient="index", columns=["category_main_cb"])
+    #print(category_main_cb_dict)
+    return(dict)
 
-db_table_names_main={1:"APARTMENTS", 2:"HOUSES", 3:"LANDPLOTS", 4:"COMMERCIAL", 5:"OTHERS"}
+def db_table_names_main():
+    dict={1:"APARTMENTS", 2:"HOUSES", 3:"LANDPLOTS", 4:"COMMERCIAL", 5:"OTHERS"}
+    return(dict)
 
-category_sub_cb_dict={
+def category_sub_cb_dict():
+    dict={
     2:"1+kk", 
     3:"1+1", 
     4:"2+kk", 
@@ -16,20 +21,28 @@ category_sub_cb_dict={
     6:"2+kk",
     34:"garáž",
     52:"garážové stání"}
-#category_sub_cb_dict=pd.DataFrame.from_dict(category_sub_cb_dict, orient="index", columns=["category_sub_cb"])
-#print(category_sub_cb_dict)
+    #category_sub_cb_dict=pd.DataFrame.from_dict(category_sub_cb_dict, orient="index", columns=["category_sub_cb"])
+    #print(category_sub_cb_dict)
+    return(dict)
 
-category_type_cb_dict={1:"prodej", 2:"nájem", 3:"dražba"}
-#category_type_cb_dict=pd.DataFrame.from_dict(category_type_cb_dict, orient="index", columns=["category_type_cb"])
-#print(category_type_cb_dict)
+def category_type_cb_dict():
+    dict={1:"prodej", 2:"nájem", 3:"dražba"}
+    #category_type_cb_dict=pd.DataFrame.from_dict(category_type_cb_dict, orient="index", columns=["category_type_cb"])
+    #print(category_type_cb_dict)
+    return(dict)
 
-db_table_names_sub={1:"SELL", 2:"RENT", 3:"AUCTION"}
+def db_table_names_sub():
+    dict={1:"SELL", 2:"RENT", 3:"AUCTION"}
+    return(dict)
 
-locality_region_id_dict={10:"Praha", 11:"Středočeský kraj", 5:"Liberecký kraj"}
-#locality_region_id_dict=pd.DataFrame.from_dict(locality_region_id_dict, orient="index", columns=["locality_region_id"])
-#print(locality_region_id_dict)
+def locality_region_id_dict():
+    dict={10:"Praha", 11:"Středočeský kraj", 5:"Liberecký kraj"}
+    #locality_region_id_dict=pd.DataFrame.from_dict(locality_region_id_dict, orient="index", columns=["locality_region_id"])
+    #print(locality_region_id_dict)
+    return(dict)
 
-description_items_dict={"Zlevněno":"discounted", 
+def description_items_dict():
+    dict ={"Zlevněno":"discounted", 
     "Původní cena":"price_original", 
     "ID zakázky":"id_order", 
     "Aktualizace":"date_update", 
@@ -88,3 +101,4 @@ description_items_dict={"Zlevněno":"discounted",
     "Datum konání dražby":"auction_date",
     "Dražební vyhláška":"auction_decree",
     "Posudek znalce":"expert_opinion"}
+    return dict
