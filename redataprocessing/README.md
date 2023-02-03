@@ -1,0 +1,1 @@
+A package that downloads and decodes real estate data from Sreality API.
