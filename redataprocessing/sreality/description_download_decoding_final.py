@@ -10,7 +10,7 @@ import certifi
 
 import nest_asyncio
 
-from sreality_api_dictionaries import description_items_dict
+from sreality.sreality_api_dictionaries import description_items_dict
 
 path_to_sqlite='estate_data.sqlite'
 
@@ -67,7 +67,9 @@ def urls_from_indices(indices):
 # async download
 nest_asyncio.apply()
 
-async def get_response(session, url, sslcontext):
+async def get_response(session, url):
+    sslcontext = ssl.create_default_context(cafile=certifi.where())
+
     try:
         async with session.get(url, ssl=sslcontext) as response:
             response_text =  await response.json()
@@ -81,13 +83,11 @@ async def main(urls, chunk_size):
         all_responses=[]
         chunks = [urls[i:i+chunk_size] for i in range(0, len(urls), chunk_size)]
 
-        sslcontext = ssl.create_default_context(cafile=certifi.where())
-
         for chunk_idx, chunk in enumerate(chunks):
             print(f'running chunk {chunk_idx+1} out of {len(chunks)} chunks ({chunk_size} items)')
             #here you process first batch -> request go async
 
-            tasks = [get_response(session, url, sslcontext) for url in chunk]
+            tasks = [get_response(session, url) for url in chunk]
             #here they come together
             responses = await asyncio.gather(*tasks)
             
@@ -133,7 +133,7 @@ def note_missing_values(r_dict_names_all):
 
     """
     print("Add these values to description_items_dict in sreality_api_dictionaries.py:")
-    print(r_dict_names_all[~r_dict_names_all.isin(description_items_dict.keys())])
+    print(r_dict_names_all[~r_dict_names_all.isin(description_items_dict().keys())])
 
 def individual_description_into_pd_df(description_individual):
     """
@@ -184,9 +184,9 @@ def description_decoding(responses_list):
             r_dict_types=r_dict_values[["type", "name"]]
             r_dict_types_all=pd.concat([r_dict_types_all, r_dict_types.loc[~r_dict_types["name"].isin(r_dict_types_all["name"]),:]])
 
-            for name_raw in description_items_dict.keys():
+            for name_raw in description_items_dict().keys():
 
-                    name_clean=description_items_dict[name_raw]
+                    name_clean=description_items_dict()[name_raw]
 
                     if name_raw not in r_dict_names.values:
                             info_relevant[name_clean]=np.nan

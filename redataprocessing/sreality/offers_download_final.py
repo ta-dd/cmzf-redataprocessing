@@ -12,15 +12,16 @@ from datetime import date
 from time import sleep 
 from random import randint
 
-from typing import Dict, List 
+from typing import Dict
 import re 
 
-from sreality_api_dictionaries import description_items_dict
-
+from sreality.sreality_api_dictionaries import description_items_dict, db_table_names_main, category_main_cb_dict, category_type_cb_dict
+from sreality.sreality_api_dictionaries import category_type_cb_dict
+category_type_cb_dict2()
 # INPUTS
 path_to_sqlite='estate_data.sqlite'
 
-category_main_cb = 3 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+category_main_cb = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
 category_type_cb = 1 # 1=prodej, 2=nájem, 3=dražba
 category_sub_cb = [] # 34=garáže, 52=garážové stání
 locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
@@ -240,6 +241,10 @@ def download_re_offers(category_main_cb,
     return df
 
 # Saving data (SQLite)
+
+def create_db_table_name():
+    category_main_cb_dict()[category_main_cb]   
+    category_type_cb_dict()[category_type_cb]
 
 def save_re_offers(df, path_to_sqlite):
     """
