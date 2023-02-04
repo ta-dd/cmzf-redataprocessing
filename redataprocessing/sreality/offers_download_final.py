@@ -22,7 +22,7 @@ from description_download_decoding_final import *
 # INPUTS
 #path_to_sqlite='estate_data.sqlite'
 
-#category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
 #category_type = 1 # 1=prodej, 2=nájem, 3=dražba
 #category_sub = [] # 34=garáže, 52=garážové stání
 #locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
@@ -117,7 +117,21 @@ def get_gps_lat_lon(estate_raw: Dict):
     """
     gps_ = estate_raw['gps']
     return gps_['lat'], gps_['lon']
-  
+
+def get_flat_type_from_name(name: str):
+    """
+
+    Parameters
+    ----------
+    name: str :
+        
+
+    Returns
+    -------
+
+    """
+    return name.split()[2]
+
 def get_area_from_name(name: str):
     """
 
@@ -186,6 +200,8 @@ def decode_collector(collector):
             estate_relevant.loc['lat'] = lat
             estate_relevant.loc['lon'] = lon
             estate_relevant['locality'] = estate['locality']
+            if category_main == 1:
+                estate_relevant['flat_type'] = get_flat_type_from_name(estate['name'])
             estate_relevant['type'] = estate['type']
             estate_relevant['category'] = estate['category']
             estate_relevant['is_auction'] = estate['is_auction']
