@@ -111,7 +111,7 @@ def get_responses(urls, workers=5):
 
     """
     loop = asyncio.get_event_loop()
-    output_list = loop.run_until_complete(main(urls, workers)) # len(output) = 20
+    output_list = loop.run_until_complete(main(urls, workers))
     
     # Getting rid of NaN rows
     output_list = [i for i in output_list if i not in [item for item in output_list if len(item) == 1]]
