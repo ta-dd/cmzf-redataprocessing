@@ -37,7 +37,22 @@ def db_table_names_type():
     return(dict)
 
 def locality_region_id_dict():
-    dict={10:"Praha", 11:"Středočeský kraj", 5:"Liberecký kraj"}
+    dict={
+        1:"Jihočeský",
+        2:"Plzeňský",
+        3:"Karlovarský",
+        4:"Ústecký",
+        5:"Liberecký",
+        6:"Královéhradecký",
+        7:"Pardubický",
+        8:"Olomoucký",
+        9:"Zlínský",
+        10:"Praha",
+        11:"Středočeský kraj",
+        12:"Moravskoslezský",
+        13:"Vysočina",
+        14:"Jihomoravský"
+        }
     #locality_region_id_dict=pd.DataFrame.from_dict(locality_region_id_dict, orient="index", columns=["locality_region_id"])
     #print(locality_region_id_dict)
     return(dict)
