@@ -101,7 +101,10 @@ def description_items_dict():
     "Místo konání dražby":"auction_place",
     "Datum konání dražby":"auction_date",
     "Dražební vyhláška":"auction_decree",
-    "Posudek znalce":"expert_opinion"}
+    "Posudek znalce":"expert_opinion",
+    "Vlastnictví": "ownership",
+    "Sklep":"area_cellar",
+    "Datum ukončení výstavby":"date_completion"}
     return dict
 
 columns_w_list = ["transport", "electricity", "traffic_communication", "water", "gas", "waste", "heating", "telecommunication"]
