@@ -1,0 +1,16 @@
+.DS_Store
+LICENSE
+README.md
+pyproject.toml
+requirements.txt
+setup.cfg
+setup.py
+redataprocessing.egg-info/PKG-INFO
+redataprocessing.egg-info/SOURCES.txt
+redataprocessing.egg-info/dependency_links.txt
+redataprocessing.egg-info/top_level.txt
+sreality/__init__.py
+sreality/description_download_decoding_final.py
+sreality/offers_download_final.py
+sreality/sreality_api_dictionaries.py
+sreality/__pycache__/__init__.cpython-311.pyc

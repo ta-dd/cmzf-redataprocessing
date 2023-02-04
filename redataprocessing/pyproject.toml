@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "redataprocessing"
-version = "0.0.1"
+version = "0.0.4"
 authors = [
   { name="Vojtěch Kania", email="vojtech.kania@gmail.com" },
   { name="Lukáš Novotný", email="30702889@fsv.cuni.cz" }
@@ -18,9 +18,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[tool.setuptools.packages]
+find = {} 
+
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
 [project.urls]
 
-"Homepage" = "https://github.com/pypa/sampleproject"
+"Homepage" = "https://github.com/vojtechkaniaedu/re_data_processing"
