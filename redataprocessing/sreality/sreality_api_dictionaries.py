@@ -103,7 +103,7 @@ def description_items_dict():
     "Dražební vyhláška":"auction_decree",
     "Posudek znalce":"expert_opinion",
     "Vlastnictví": "ownership",
-    "Sklep":"area_cellar",
+    "Sklep":"cellar",
     "Datum ukončení výstavby":"date_completion"}
     return dict
 
