@@ -104,7 +104,8 @@ def description_items_dict():
     "Posudek znalce":"expert_opinion",
     "Vlastnictví": "ownership",
     "Sklep":"cellar",
-    "Datum ukončení výstavby":"date_completion"}
+    "Datum ukončení výstavby":"date_completion",
+    "Balkón":"balcony"}
     return dict
 
 columns_w_list = ["transport", "electricity", "traffic_communication", "water", "gas", "waste", "heating", "telecommunication"]
