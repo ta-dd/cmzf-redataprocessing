@@ -206,9 +206,9 @@ def decode_collector(collector: list, category_main: int):
             estate_relevant.loc['lon'] = lon
             estate_relevant['locality'] = estate['locality']
             if category_main == 1:
-                estate_relevant['flat_type'] = get_flat_type_from_name(estate['name'])
-            estate_relevant['type'] = estate['type']
-            estate_relevant['category'] = estate['category']
+                estate_relevant['apartment_type'] = get_flat_type_from_name(estate['name'])
+            estate_relevant['category_type'] = estate['type']
+            estate_relevant['category_main'] = estate['category']
             estate_relevant['is_auction'] = estate['is_auction']
             estate_relevant['exclusively_at_rk'] = estate['exclusively_at_rk']
 
