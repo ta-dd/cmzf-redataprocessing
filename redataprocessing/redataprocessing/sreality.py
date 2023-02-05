@@ -20,7 +20,7 @@ from redataprocessing.sreality_description_download_decoding import *
 
 # requesting information from sreality api
 
-def download_lists(category_main, category_type, category_sub, locality_region_id):
+def download_lists(category_main: category_main_cb_dict.keys(), category_type: int, category_sub: int, locality_region_id:int|list):
     """
 
     Parameters
@@ -38,7 +38,7 @@ def download_lists(category_main, category_type, category_sub, locality_region_i
     -------
 
     """
-
+    category_main_cb_dict
     category_sub_string = '%7C'.join(str(v) for v in category_sub)
     
     if isinstance(locality_region_id, int):
@@ -258,7 +258,7 @@ def download_re_offers(category_main,
     category_type=category_type_input, 
     category_sub=category_sub_input, 
     locality_region_id=locality_region_id_input)
-    
+
     df=decode_collector(collector, category_main=category_main_input)
     
     df["locality_region_id"] = locality_region_id_input
