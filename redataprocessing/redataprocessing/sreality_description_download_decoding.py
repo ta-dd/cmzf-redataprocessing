@@ -262,14 +262,12 @@ def save_to_db(df, path_to_sqlite, category_main, category_type):
 
     # checking if db exists
     c.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{}' ".format(db_table_name_description))
-    
+
     # loading indices for which no description was downloaded
     if c.fetchone()[0]==1:
         # if table with description exists - addition of columns that are not in description table
-        pragma_line="PRAGMA table_info({})".format(db_table_name_description)
-        
-        d=c.execute(pragma_line)
-        list_of_colnames=d.fetchall()[0]
+        cursor = con.execute('select * from {}'.format(db_table_name_description))
+        list_of_colnames=list(map(lambda x: x[0], cursor.description))
 
         for i in df.columns:
             if i not in list_of_colnames:
@@ -295,7 +293,6 @@ def get_re_offers_description(path_to_sqlite, category_main, category_type):
 
     """
     
-
     category_main_input=category_main
     category_type_input=category_type
     path_to_sqlite_input=path_to_sqlite
@@ -305,9 +302,8 @@ def get_re_offers_description(path_to_sqlite, category_main, category_type):
     category_type=category_type_input)
 
     urls=urls_from_indices(indices)
-    output_list=get_responses(urls, workers=5)
+    output_list=get_responses(urls, workers=20)
     df = description_decoding(output_list)
-
 
     db_table_name=create_db_table_name(category_main=category_main_input, category_type=category_type_input)
     db_table_name_description="DESCRIPTION_"+db_table_name

@@ -20,7 +20,7 @@ from redataprocessing.sreality_description_download_decoding import *
 
 # requesting information from sreality api
 
-def download_lists(category_main: category_main_cb_dict.keys(), category_type: int, category_sub: int, locality_region_id:int|list):
+def download_lists(category_main: int, category_type: int, locality_region_id: int|list, category_sub: list=None):
     """
 
     Parameters
@@ -38,15 +38,21 @@ def download_lists(category_main: category_main_cb_dict.keys(), category_type: i
     -------
 
     """
-    category_main_cb_dict
-    category_sub_string = '%7C'.join(str(v) for v in category_sub)
+
+
+    if isinstance(category_sub, int):
+        category_sub_string=str(category_sub)
+    elif isinstance(category_sub, list):
+        category_sub_string = '%7C'.join(str(v) for v in category_sub)
+    else:
+        print("TypeError: category_sub must be an integer or a list")
     
     if isinstance(locality_region_id, int):
         locality_region_id_string=str(locality_region_id)
     elif isinstance(locality_region_id, list):
         locality_region_id_string = '%7C'.join(str(v) for v in locality_region_id)
     else:
-        print("locality_region_id must be an integer or a list")
+        print("TypeError: locality_region_id must be an integer or a list")
 
     collector={}
     i=0
@@ -67,7 +73,6 @@ def download_lists(category_main: category_main_cb_dict.keys(), category_type: i
             
         if len(category_sub)>0:
             params=params|{"category_sub_cb":category_sub_string}
-
 
         r = requests.get(base_url, params=params, verify= True)
 
@@ -293,7 +298,8 @@ def save_re_offers(df, path_to_sqlite, category_main, category_type):
     # Closing the connection
     con.close()
 
-def get_re_offers(path_to_sqlite, category_main, category_type, category_sub, locality_region_id):
+def get_re_offers(path_to_sqlite: str, category_main: int, category_type: int, 
+locality_region_id: int, category_sub: list=None):
     """
 
     Parameters
@@ -316,6 +322,7 @@ def get_re_offers(path_to_sqlite, category_main, category_type, category_sub, lo
     
     category_main_input=category_main
     category_type_input=category_type
+    category_sub_input=category_sub
     path_to_sqlite_input=path_to_sqlite
     locality_region_id_input=locality_region_id
     
@@ -323,7 +330,7 @@ def get_re_offers(path_to_sqlite, category_main, category_type, category_sub, lo
 
     df=download_re_offers(category_main=category_main_input, 
     category_type=category_type_input, 
-    category_sub=category_sub, 
+    category_sub=category_sub_input, 
     locality_region_id=locality_region_id_input)
 
     db_table_name=create_db_table_name(category_main=category_main_input, category_type=category_type_input)
@@ -351,4 +358,4 @@ get_re_offers(path_to_sqlite="estate_data.sqlite",
 category_main=1, 
 category_type=1, 
 category_sub=[], 
-locality_region_id=[1])
+locality_region_id=12)
