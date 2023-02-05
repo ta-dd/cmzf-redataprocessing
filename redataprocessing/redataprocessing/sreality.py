@@ -15,8 +15,8 @@ from random import randint
 from typing import Dict
 import re 
 
-from sreality_api_dictionaries import *
-from description_download_decoding_final import *
+from sreality.sreality_api_dictionaries import *
+from sreality.description_download_decoding_final import *
 
 
 # INPUTS
@@ -211,9 +211,9 @@ def decode_collector(collector):
             estate_relevant['is_auction'] = estate['is_auction']
             estate_relevant['exclusively_at_rk'] = estate['exclusively_at_rk']
 
-            estate_relevant['category_main'] = estate["seo"]["category_main"]
-            estate_relevant['category_sub'] = estate["seo"]["category_sub"]
-            estate_relevant['category_type'] = estate["seo"]["category_type"]
+            estate_relevant['category_main'] = estate["seo"]["category_main_cb"]
+            estate_relevant['category_sub'] = estate["seo"]["category_sub_cb"]
+            estate_relevant['category_type'] = estate["seo"]["category_type_cb"]
 
             company_id, company_name = get_company_details(estate)
             estate_relevant['company_id'] = company_id

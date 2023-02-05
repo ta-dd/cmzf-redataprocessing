@@ -227,7 +227,7 @@ def transformer(value):
             string += i['value'] + "  "
         return string[:-2]
 
-def save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list):
+def save_to_db(df, path_to_sqlite, category_main, category_type):
     """
 
     Parameters
@@ -250,7 +250,7 @@ def save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list):
     # Creates a table or appends if exists
     con = sqlite3.connect(path_to_sqlite)
     
-    db_table_name=create_db_table_name(category_main_cb, category_type_cb)
+    db_table_name=create_db_table_name(category_main, category_type)
     db_table_name_description="DESCRIPTION_"+db_table_name
 
     # addition of columns that are not in description table
@@ -268,7 +268,7 @@ def save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list):
     # Closing the connection
     con.close()
 
-def get_re_offers_description(path_to_sqlite):
+def get_re_offers_description(path_to_sqlite, category_main, category_type):
     """
 
     Parameters
@@ -288,4 +288,4 @@ def get_re_offers_description(path_to_sqlite):
     output_list=get_responses(urls, workers=5)
     df = description_decoding(output_list)
 
-    save_to_db(df, path_to_sqlite, columns_w_list=columns_w_list)
+    save_to_db(df, path_to_sqlite, category_main, category_type)
