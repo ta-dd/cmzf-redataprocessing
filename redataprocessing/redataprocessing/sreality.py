@@ -243,14 +243,19 @@ def download_re_offers(category_main,
 
     """
 
-    collector=download_lists(category_main=category_main, 
-    category_type=category_type, 
-    category_sub=category_sub, 
-    locality_region_id=locality_region_id)
+    category_main_input=category_main
+    category_type_input=category_type
+    category_sub_input=category_sub
+    locality_region_id_input=locality_region_id
 
-    df=decode_collector(collector, category_main=category_main)
+    collector=download_lists(category_main=category_main_input, 
+    category_type=category_type_input, 
+    category_sub=category_sub_input, 
+    locality_region_id=locality_region_id_input)
+
+    df=decode_collector(collector, category_main=category_main_input)
     
-    df["locality_region_id"] = locality_region_id[0]
+    df["locality_region_id"] = locality_region_id_input
     
     return df
 
@@ -306,11 +311,18 @@ def get_re_offers(path_to_sqlite, category_main, category_type, category_sub, lo
     category_main_input=category_main
     category_type_input=category_type
     path_to_sqlite_input=path_to_sqlite
+    locality_region_id_input=locality_region_id
+    
+    print("initiating download of offers")
 
     df=download_re_offers(category_main=category_main_input, 
     category_type=category_type_input, 
     category_sub=category_sub, 
-    locality_region_id=locality_region_id)
+    locality_region_id=locality_region_id_input)
+
+    db_table_name=create_db_table_name(category_main=category_main_input, category_type=category_type_input)
+    db_table_name_offers="OFFERS_"+db_table_name
+    print("saving offers to database (table name {})".format(db_table_name_offers))
 
     save_re_offers(df, 
     path_to_sqlite=path_to_sqlite_input, 

@@ -35,6 +35,7 @@ def getting_offers_without_downloaded_description(path_to_sqlite, category_main,
 
     # getting table names
     db_table_name=create_db_table_name(category_main, category_type)
+    db_table_name_offers="OFFERS_"+db_table_name
     db_table_name_description="DESCRIPTION_"+db_table_name
 
     # checking if db exists
@@ -43,10 +44,10 @@ def getting_offers_without_downloaded_description(path_to_sqlite, category_main,
     # loading indices for which no description was downloaded
     if c.fetchone()[0]==1:
         # if table with description exists
-        indices = pd.read_sql("SELECT hash_id FROM {} WHERE hash_id not in (SELECT hash_id FROM {})".format(db_table_name, db_table_name_description), con=con)
+        indices = pd.read_sql("SELECT hash_id FROM {} WHERE hash_id not in (SELECT hash_id FROM {})".format(db_table_name_offers, db_table_name_description), con=con)
     else:
         # loading descriptions for the first time - table with description does not exist
-        indices = pd.read_sql("SELECT hash_id FROM {}".format(db_table_name), con=con)
+        indices = pd.read_sql("SELECT hash_id FROM {}".format(db_table_name_offers), con=con)
     c.close()
     con.close()
 
@@ -88,12 +89,13 @@ async def main(urls, chunk_size):
         chunks = [urls[i:i+chunk_size] for i in range(0, len(urls), chunk_size)]
 
         for chunk_idx, chunk in enumerate(chunks):
-            print(f'running chunk {chunk_idx+1} out of {len(chunks)} chunks ({chunk_size} items)')
             #here you process first batch -> request go async
 
             tasks = [get_response(session, url) for url in chunk]
             #here they come together
             responses = await asyncio.gather(*tasks)
+
+            print(f'downloaded description of {(chunk_idx+1)*chunk_size} offers out of {len(urls)} offers')
             
             #here we sqlite can be used
             #to name each observation you could use: response["_embedded"]["favourite"]["_links"]["self"]["href"][17:]
@@ -137,7 +139,7 @@ def note_missing_values(r_dict_names_all):
 
     """
     print("Add these values to description_items_dict in sreality_api_dictionaries.py:")
-    print(r_dict_names_all[~r_dict_names_all.isin(description_items_dict().keys())])
+    print(r_dict_names_all[~r_dict_names_all.isin(description_items_dict.keys())])
 
 def individual_description_into_pd_df(description_individual):
     """
@@ -188,9 +190,9 @@ def description_decoding(responses_list):
             r_dict_types=r_dict_values[["type", "name"]]
             r_dict_types_all=pd.concat([r_dict_types_all, r_dict_types.loc[~r_dict_types["name"].isin(r_dict_types_all["name"]),:]])
 
-            for name_raw in description_items_dict().keys():
+            for name_raw in description_items_dict.keys():
 
-                    name_clean=description_items_dict()[name_raw]
+                    name_clean=description_items_dict[name_raw]
 
                     if name_raw not in r_dict_names.values:
                             info_relevant[name_clean]=np.nan
@@ -253,18 +255,24 @@ def save_to_db(df, path_to_sqlite, category_main, category_type):
 
     # Creates a table or appends if exists
     con = sqlite3.connect(path_to_sqlite)
+    c=con.cursor()
     
     db_table_name=create_db_table_name(category_main, category_type)
     db_table_name_description="DESCRIPTION_"+db_table_name
 
-    # addition of columns that are not in description table
-    c=con.cursor()
-    pragma_line="PRAGMA table_info({})".format(db_table_name_description)
-    d=c.execute(pragma_line)
-    list_of_colnames=d.fetchall()[0]
+    # checking if db exists
+    c.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{}' ".format(db_table_name_description))
+    
+    # loading indices for which no description was downloaded
+    if c.fetchone()[0]==1:
+        # if table with description exists - addition of columns that are not in description table
+        pragma_line="PRAGMA table_info({})".format(db_table_name_description)
+        
+        d=c.execute(pragma_line)
+        list_of_colnames=d.fetchall()[0]
 
-    for i in df.columns:
-        if i not in list_of_colnames:
+        for i in df.columns:
+            if i not in list_of_colnames:
                 c.execute("ALTER TABLE {} ADD {} VARCHAR(100);".format(db_table_name_description, i))
 
     df.to_sql(name = db_table_name_description, con = con, index = False, if_exists = 'append')
@@ -287,13 +295,22 @@ def get_re_offers_description(path_to_sqlite, category_main, category_type):
 
     """
     
-        
-    indices=getting_offers_without_downloaded_description(path_to_sqlite=path_to_sqlite[0], 
-    category_main=category_main[0], 
-    category_type=category_type[0])
+
+    category_main_input=category_main
+    category_type_input=category_type
+    path_to_sqlite_input=path_to_sqlite
+    
+    indices=getting_offers_without_downloaded_description(path_to_sqlite=path_to_sqlite_input, 
+    category_main=category_main_input, 
+    category_type=category_type_input)
 
     urls=urls_from_indices(indices)
     output_list=get_responses(urls, workers=5)
     df = description_decoding(output_list)
 
-    save_to_db(df, path_to_sqlite=path_to_sqlite[0], category_main=category_main[0], category_type=category_type[0])
+
+    db_table_name=create_db_table_name(category_main=category_main_input, category_type=category_type_input)
+    db_table_name_description="DESCRIPTION_"+db_table_name
+    print("saving description of offers to database (table name {})".format(db_table_name_description))
+
+    save_to_db(df, path_to_sqlite=path_to_sqlite_input, category_main=category_main_input, category_type=category_type_input)

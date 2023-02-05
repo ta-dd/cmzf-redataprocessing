@@ -57,8 +57,7 @@ def locality_region_id_dict():
     #print(locality_region_id_dict)
     return(dict)
 
-def description_items_dict():
-    dict ={"Zlevněno":"discounted", 
+description_items_dict={"Zlevněno":"discounted", 
     "Původní cena":"price_original", 
     "ID zakázky":"id_order", 
     "Aktualizace":"date_update", 
