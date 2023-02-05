@@ -249,7 +249,9 @@ def download_re_offers(category_main,
     locality_region_id=locality_region_id)
 
     df=decode_collector(collector)
-
+    
+    df["locality_region_id"] = locality_region_id[0]
+    
     return df
 
 # Saving data (SQLite)
