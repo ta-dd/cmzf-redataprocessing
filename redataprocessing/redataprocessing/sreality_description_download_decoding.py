@@ -178,33 +178,34 @@ def description_decoding(responses_list):
     r_dict_types_all=pd.DataFrame(columns=["name", "type"])
 
     for r_dict in responses_list:
-            
-            info_relevant = pd.Series(dtype="object")
-            info_relevant["description"]=r_dict["text"]["value"]
+            try:
+                info_relevant = pd.Series(dtype="object")
+                info_relevant["description"]=r_dict["text"]["value"]
 
-            r_dict_values=pd.DataFrame(r_dict["items"], columns =['type', 'name', 'value'])
+                r_dict_values=pd.DataFrame(r_dict["items"], columns =['type', 'name', 'value'])
 
-            r_dict_names=r_dict_values["name"]
-            r_dict_names_all=pd.concat([r_dict_names_all, r_dict_names[~r_dict_names.isin(r_dict_names_all)]])
+                r_dict_names=r_dict_values["name"]
+                r_dict_names_all=pd.concat([r_dict_names_all, r_dict_names[~r_dict_names.isin(r_dict_names_all)]])
 
-            r_dict_types=r_dict_values[["type", "name"]]
-            r_dict_types_all=pd.concat([r_dict_types_all, r_dict_types.loc[~r_dict_types["name"].isin(r_dict_types_all["name"]),:]])
+                r_dict_types=r_dict_values[["type", "name"]]
+                r_dict_types_all=pd.concat([r_dict_types_all, r_dict_types.loc[~r_dict_types["name"].isin(r_dict_types_all["name"]),:]])
 
-            for name_raw in description_items_dict.keys():
+                for name_raw in description_items_dict.keys():
 
-                    name_clean=description_items_dict[name_raw]
+                        name_clean=description_items_dict[name_raw]
 
-                    if name_raw not in r_dict_names.values:
-                            info_relevant[name_clean]=np.nan
-                    elif r_dict_values[r_dict_names==name_raw]["type"].all()=="set":
-                            index_nr=int(r_dict_values.index[r_dict_values['name'] == name_raw].tolist()[0])
-                            info_relevant[name_clean]=r_dict_values["value"][r_dict_values["name"]==name_raw][index_nr][0]["value"].values[0]
-                            del index_nr
-                    else:
-                            info_relevant[name_clean]=r_dict_values["value"][r_dict_values["name"]==name_raw].values[0]
+                        if name_raw not in r_dict_names.values:
+                                info_relevant[name_clean]=np.nan
+                        elif r_dict_values[r_dict_names==name_raw]["type"].all()=="set":
+                                index_nr=int(r_dict_values.index[r_dict_values['name'] == name_raw].tolist()[0])
+                                info_relevant[name_clean]=r_dict_values["value"][r_dict_values["name"]==name_raw][index_nr][0]["value"].values[0]
+                                del index_nr
+                        else:
+                                info_relevant[name_clean]=r_dict_values["value"][r_dict_values["name"]==name_raw].values[0]
 
-            description_individual[r_dict["_embedded"]["favourite"]["_links"]["self"]["href"][17:]] = info_relevant
-    
+                description_individual[r_dict["_embedded"]["favourite"]["_links"]["self"]["href"][17:]] = info_relevant
+            except:
+                print("Something wrong. I guess, the offer disappeared just a moment ago.")
     note_missing_values(r_dict_names_all)
 
     df_final=individual_description_into_pd_df(description_individual)
