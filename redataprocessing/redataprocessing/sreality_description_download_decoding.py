@@ -10,14 +10,14 @@ import certifi
 
 import nest_asyncio
 
-from sreality_api_dictionaries import *
+from redataprocessing.sreality_api_dictionaries import *
 
 #path_to_sqlite='estate_data.sqlite'
 
 # async download of offer description
 
 # preparation of urls for async
-def getting_offers_without_downloaded_description(path_to_sqlite):
+def getting_offers_without_downloaded_description(path_to_sqlite, category_main, category_type):
     """
 
     Parameters
@@ -33,16 +33,20 @@ def getting_offers_without_downloaded_description(path_to_sqlite):
 
     c = con.cursor()
 
+    # getting table names
+    db_table_name=create_db_table_name(category_main, category_type)
+    db_table_name_description="DESCRIPTION_"+db_table_name
+
     # checking if db exists
-    c.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='DESCRIPTION_TABLE' ''')
+    c.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{}' ".format(db_table_name_description))
     
     # loading indices for which no description was downloaded
     if c.fetchone()[0]==1:
-        # if table DESCRIPTION_TABLE exists
-        indices = pd.read_sql("SELECT hash_id FROM OFFERS_TABLE WHERE hash_id not in (SELECT hash_id FROM DESCRIPTION_TABLE)", con=con)
+        # if table with description exists
+        indices = pd.read_sql("SELECT hash_id FROM {} WHERE hash_id not in (SELECT hash_id FROM {})".format(db_table_name, db_table_name_description), con=con)
     else:
-        # loading descriptions for the first time - table DESCRIPTION_TABLE does not exist
-        indices = pd.read_sql("SELECT hash_id FROM OFFERS_TABLE", con=con)
+        # loading descriptions for the first time - table with description does not exist
+        indices = pd.read_sql("SELECT hash_id FROM {}".format(db_table_name), con=con)
     c.close()
     con.close()
 
@@ -283,7 +287,7 @@ def get_re_offers_description(path_to_sqlite, category_main, category_type):
 
     """
         
-    indices=getting_offers_without_downloaded_description(path_to_sqlite)
+    indices=getting_offers_without_downloaded_description(path_to_sqlite, category_main, category_type)
     urls=urls_from_indices(indices)
     output_list=get_responses(urls, workers=5)
     df = description_decoding(output_list)

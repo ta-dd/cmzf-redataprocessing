@@ -15,17 +15,8 @@ from random import randint
 from typing import Dict
 import re 
 
-from sreality.sreality_api_dictionaries import *
-from sreality.description_download_decoding_final import *
-
-
-# INPUTS
-#path_to_sqlite='estate_data.sqlite'
-
-category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
-#category_type = 1 # 1=prodej, 2=nájem, 3=dražba
-#category_sub = [] # 34=garáže, 52=garážové stání
-#locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+from redataprocessing.sreality_api_dictionaries import *
+from redataprocessing.sreality_description_download_decoding import *
 
 # requesting information from sreality api
 
@@ -319,4 +310,17 @@ def get_re_offers(path_to_sqlite, category_main, category_type, category_sub, lo
 
     get_re_offers_description(path_to_sqlite, category_main, category_type)
 
-#get_re_offers(path_to_sqlite=path_to_sqlite, category_main=category_main, category_type=category_type, category_sub=category_sub, locality_region_id=locality_region_id)
+
+# INPUTS
+#path_to_sqlite='estate_data.sqlite'
+
+#category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+#category_type = 1 # 1=prodej, 2=nájem, 3=dražba
+#category_sub = [] # 34=garáže, 52=garážové stání
+#locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+
+get_re_offers(path_to_sqlite="estate_data.sqlite", 
+category_main=1, 
+category_type=1, 
+category_sub=[], 
+locality_region_id=[1])
