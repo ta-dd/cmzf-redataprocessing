@@ -248,15 +248,10 @@ def download_re_offers(category_main,
     category_sub=category_sub, 
     locality_region_id=locality_region_id)
 
-<<<<<<< HEAD
     df=decode_collector(collector, category_main=category_main)
-
-=======
-    df=decode_collector(collector)
     
     df["locality_region_id"] = locality_region_id[0]
     
->>>>>>> c1e51b2d5053de3b22014bcb7a5ab50403402608
     return df
 
 # Saving data (SQLite)
@@ -308,26 +303,30 @@ def get_re_offers(path_to_sqlite, category_main, category_type, category_sub, lo
 
     """
     
-    df=download_re_offers(category_main=int(category_main), 
-    category_type=int(category_type), 
-    category_sub=int(category_sub), 
-    locality_region_id=int(locality_region_id))
+    category_main_input=category_main
+    category_type_input=category_type
+    path_to_sqlite_input=path_to_sqlite
+
+    df=download_re_offers(category_main=category_main_input, 
+    category_type=category_type_input, 
+    category_sub=category_sub, 
+    locality_region_id=locality_region_id)
 
     save_re_offers(df, 
-    path_to_sqlite=str(path_to_sqlite), 
-    category_main=int(category_main), 
-    category_type=int(category_type))
+    path_to_sqlite=path_to_sqlite_input, 
+    category_main=category_main_input, 
+    category_type=category_type_input)
 
-    get_re_offers_description(path_to_sqlite=str(path_to_sqlite), 
-    category_main=int(category_main), category_type=int(category_type))
+    get_re_offers_description(path_to_sqlite=path_to_sqlite_input, 
+    category_main=category_main_input, category_type=category_type_input)
 
 # INPUTS
-#path_to_sqlite='estate_data.sqlite'
+path_to_sqlite='estate_data.sqlite'
 
-#category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
-#category_type = 1 # 1=prodej, 2=nájem, 3=dražba
-#category_sub = [] # 34=garáže, 52=garážové stání
-#locality_region_id = [10] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+category_type = 1 # 1=prodej, 2=nájem, 3=dražba
+category_sub = [] # 34=garáže, 52=garážové stání
+locality_region_id = 10 #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
 get_re_offers(path_to_sqlite="estate_data.sqlite", 
 category_main=1, 
