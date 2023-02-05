@@ -112,7 +112,6 @@ def get_gps_lat_lon(estate_raw: Dict):
     ----------
     estate_raw: Dict :
         
-
     Returns
     -------
 
@@ -177,7 +176,7 @@ def get_company_details(estate_raw: Dict):
 
 # wrapping up all decoding
 
-def decode_collector(collector, category_main):
+def decode_collector(collector: list, category_main: int):
     """
 
     Parameters
@@ -232,10 +231,10 @@ def decode_collector(collector, category_main):
     return df
 
 # creating ultimated function for downloading and transforming into pandas df
-def download_re_offers(category_main, 
-    category_type, 
-    category_sub, 
-    locality_region_id):
+def download_re_offers(category_main: int, 
+    category_type: int, 
+    locality_region_id: int, 
+    category_sub: list=None):
     """
 
     Parameters
@@ -248,7 +247,6 @@ def download_re_offers(category_main,
         
     locality_region_id :
         
-
     Returns
     -------
 
@@ -272,7 +270,7 @@ def download_re_offers(category_main,
 
 # Saving data (SQLite)
 
-def save_re_offers(df, path_to_sqlite, category_main, category_type):
+def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, category_type: int):
     """
 
     Parameters
@@ -298,8 +296,8 @@ def save_re_offers(df, path_to_sqlite, category_main, category_type):
     # Closing the connection
     con.close()
 
-def get_re_offers(path_to_sqlite: str, category_main: int, category_type: int, 
-locality_region_id: int, category_sub: list=None):
+def get_re_offers(path_to_sqlite: str, category_main: str, category_type: str, 
+locality_region: int, category_sub: list=None):
     """
 
     Parameters
@@ -319,12 +317,25 @@ locality_region_id: int, category_sub: list=None):
     -------
 
     """
+
+    # inputs to further functions
+    if category_main not in category_main_dict.keys():
+        raise ValueError("get_re_offers_description: status must be one of %r." % category_main_dict.keys())
+    if category_type not in category_type_dict.keys():
+        raise ValueError("get_re_offers_description: status must be one of %r." % category_type_dict.keys())
     
-    category_main_input=category_main
-    category_type_input=category_type
-    category_sub_input=category_sub
+    category_main_input=category_main_dict[category_main]
+    category_type_input=category_type_dict[category_type]
+
+    category_sub_input = []
+    for idx in category_sub:
+        category_sub_input.append(category_sub_dict[idx])
+
+    locality_region_id_input = []
+    for idx in locality_region:
+        locality_region_id_input.append(category_sub_dict[idx])
+
     path_to_sqlite_input=path_to_sqlite
-    locality_region_id_input=locality_region_id
     
     print("initiating download of offers")
 
@@ -355,7 +366,7 @@ category_sub = [] # 34=garáže, 52=garážové stání
 locality_region_id = 13 #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
 get_re_offers(path_to_sqlite="estate_data.sqlite", 
-category_main=1, 
+category_main="apartments", 
 category_type=1, 
 category_sub=[], 
 locality_region_id=12)
