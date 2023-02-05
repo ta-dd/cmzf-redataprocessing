@@ -43,7 +43,7 @@ def download_lists(category_main, category_type, category_sub, locality_region_i
     
     if isinstance(locality_region_id, int):
         locality_region_id_string=str(locality_region_id)
-    elif isinstance(locality_region_id, list)
+    elif isinstance(locality_region_id, list):
         locality_region_id_string = '%7C'.join(str(v) for v in locality_region_id)
     else:
         print("locality_region_id must be an integer or a list")
@@ -80,12 +80,12 @@ def download_lists(category_main, category_type, category_sub, locality_region_i
             r_dict=r.json()
 
             if len(r_dict["_embedded"]["estates"]) == 0:
-                print(f"Page {i+1} is blank.")
+                print(f"downloading of offers finished")
                 break
 
             collector[i]=r_dict
             
-            print(f"Page {i+1} was scraped.")
+            print(f"page {i+1} was scraped")
 
             i=i+1
             j=0
@@ -258,7 +258,7 @@ def download_re_offers(category_main,
     category_type=category_type_input, 
     category_sub=category_sub_input, 
     locality_region_id=locality_region_id_input)
-
+    
     df=decode_collector(collector, category_main=category_main_input)
     
     df["locality_region_id"] = locality_region_id_input
