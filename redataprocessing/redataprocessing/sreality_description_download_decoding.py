@@ -12,21 +12,20 @@ import nest_asyncio
 
 from redataprocessing.sreality_api_dictionaries import *
 
-#path_to_sqlite='estate_data.sqlite'
-
 # async download of offer description
 
 # preparation of urls for async
-def getting_offers_without_downloaded_description(path_to_sqlite, category_main, category_type):
+def getting_offers_without_downloaded_description(path_to_sqlite: str, category_main: int, category_type: int):
     """
 
     Parameters
     ----------
-    path_to_sqlite :
+    path_to_sqlite : string of path to sqlite database where table with offers is already stored
         
-
     Returns
     -------
+    This function downloads description of all offers that do not have the description already downloaded.
+    Creates a table in the sqlite database. If the table already exists it appends new data to the table.
 
     """
     con = sqlite3.connect(path_to_sqlite)
@@ -95,7 +94,7 @@ async def main(urls, chunk_size):
             #here they come together
             responses = await asyncio.gather(*tasks)
 
-            print(f'downloaded description of {(chunk_idx+1)*chunk_size} offers out of {len(urls)} offers')
+            print(f'downloaded description of offers: {(chunk_idx+1)*chunk_size} out of {len(urls)}')
             
             #here we sqlite can be used
             #to name each observation you could use: response["_embedded"]["favourite"]["_links"]["self"]["href"][17:]
@@ -233,14 +232,14 @@ def transformer(value):
             string += i['value'] + "  "
         return string[:-2]
 
-def save_to_db(df, path_to_sqlite, category_main, category_type):
+def save_to_db(df: pd.DataFrame, path_to_sqlite: str, category_main: int, category_type: int):
     """
 
     Parameters
     ----------
-    df :
+    df : pandas data frame
         
-    path_to_sqlite :
+    path_to_sqlite : string of path to sqlite database where the dataframe will be stored
         
     columns_w_list :
          (Default value = columns_w_list)
@@ -283,13 +282,14 @@ def get_re_offers_description(path_to_sqlite, category_main, category_type):
 
     Parameters
     ----------
-    path_to_sqlite :
+    path_to_sqlite : string of path to sqlite database where table with offers is already stored
+    category_main : 
+    category_type : 
         
-    columns_w_list :
-         (Default value = columns_w_list)
-
     Returns
     -------
+    This function downloads description of all offers that do not have the description already downloaded.
+    Creates a table in the sqlite database. If the table already exists it appends new data to the table.
 
     """
     
@@ -307,6 +307,7 @@ def get_re_offers_description(path_to_sqlite, category_main, category_type):
 
     db_table_name=create_db_table_name(category_main=category_main_input, category_type=category_type_input)
     db_table_name_description="DESCRIPTION_"+db_table_name
-    print("saving description of offers to database (table name {})".format(db_table_name_description))
+    print("saving description of offers to database (table {})".format(db_table_name_description))
 
     save_to_db(df, path_to_sqlite=path_to_sqlite_input, category_main=category_main_input, category_type=category_type_input)
+    print("saved description of offers to database (table {})".format(db_table_name_description))

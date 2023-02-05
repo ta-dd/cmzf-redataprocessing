@@ -3,7 +3,6 @@
 #import pandas as pd
 
 category_main_cb_dict={1:"byty", 2:"domy", 3:"pozemky", 4:"komerční", 5:"ostatní"}
-
 #category_main_cb_dict=pd.DataFrame.from_dict(category_main_cb_dict, orient="index", columns=["category_main_cb"])
 #print(category_main_cb_dict)
 
@@ -51,7 +50,8 @@ description_items_dict={"Zlevněno":"discounted",
     "Aktualizace":"date_update", 
     "Stavba":"building_type", 
     "Stav objektu":"building_condition", 
-    "Typ objektu":"apartment_type",
+    "Typ objektu":"building_type", 
+    "Typ bytu":"apartment_type",
     "Počet bytů":"apartment_count",
     "Anuita":"annuity",
     "Umístění objektu":"building_location", 
@@ -116,7 +116,6 @@ description_items_dict={"Zlevněno":"discounted",
     "Sklep":"cellar",
     "Datum ukončení výstavby":"date_development_completion",
     "Balkón":"balcony"}
-
 
 columns_w_list = ["transport", "electricity", "traffic_communication", "water", "gas", "waste", "heating", "telecommunication"]
 

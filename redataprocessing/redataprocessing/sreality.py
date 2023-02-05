@@ -90,7 +90,7 @@ def download_lists(category_main: int, category_type: int, locality_region_id: i
 
             collector[i]=r_dict
             
-            print(f"page {i+1} was scraped")
+            print(f"downloaded list of offers: page {i+1}")
 
             i=i+1
             j=0
@@ -346,7 +346,7 @@ locality_region_id: int, category_sub: list=None):
     category_main=category_main_input, category_type=category_type_input)
 
 # INPUTS
-sleep(1)
+sleep(2)
 path_to_sqlite='estate_data.sqlite'
 
 category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
