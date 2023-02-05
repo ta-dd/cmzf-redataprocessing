@@ -166,7 +166,7 @@ def get_company_details(estate_raw: Dict):
 
 # wrapping up all decoding
 
-def decode_collector(collector):
+def decode_collector(collector, category_main):
     """
 
     Parameters
@@ -248,7 +248,7 @@ def download_re_offers(category_main,
     category_sub=category_sub, 
     locality_region_id=locality_region_id)
 
-    df=decode_collector(collector)
+    df=decode_collector(collector, category_main=category_main)
 
     return df
 
@@ -271,7 +271,7 @@ def save_re_offers(df, path_to_sqlite, category_main, category_type):
     con = sqlite3.connect(path_to_sqlite) # We must choose the name for our DB !
 
     # Creates a table or appends if exists
-    db_table_name=create_db_table_name(category_main, category_type)
+    db_table_name=create_db_table_name(category_main=category_main, category_type=category_type)
     db_table_name_offers="OFFERS_"+db_table_name
 
     df.to_sql(name = db_table_name_offers, con= con, index = False, if_exists = 'append')
@@ -301,15 +301,18 @@ def get_re_offers(path_to_sqlite, category_main, category_type, category_sub, lo
 
     """
     
-    df=download_re_offers(category_main=category_main, 
-    category_type=category_type, 
-    category_sub=category_sub, 
-    locality_region_id=locality_region_id)
+    df=download_re_offers(category_main=int(category_main), 
+    category_type=int(category_type), 
+    category_sub=int(category_sub), 
+    locality_region_id=int(locality_region_id))
 
-    save_re_offers(df, path_to_sqlite, category_main, category_type)
+    save_re_offers(df, 
+    path_to_sqlite=str(path_to_sqlite), 
+    category_main=int(category_main), 
+    category_type=int(category_type))
 
-    get_re_offers_description(path_to_sqlite, category_main, category_type)
-
+    get_re_offers_description(path_to_sqlite=str(path_to_sqlite), 
+    category_main=int(category_main), category_type=int(category_type))
 
 # INPUTS
 #path_to_sqlite='estate_data.sqlite'
