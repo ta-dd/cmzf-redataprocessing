@@ -38,20 +38,20 @@ def db_table_names_type():
 
 def locality_region_id_dict():
     dict={
-        1:"Jihočeský",
-        2:"Plzeňský",
-        3:"Karlovarský",
-        4:"Ústecký",
-        5:"Liberecký",
-        6:"Královéhradecký",
-        7:"Pardubický",
-        8:"Olomoucký",
-        9:"Zlínský",
+        1:"Jihočeský kraj",
+        2:"Plzeňský kraj",
+        3:"Karlovarský kraj",
+        4:"Ústecký kraj",
+        5:"Liberecký kraj",
+        6:"Královéhradecký kraj",
+        7:"Pardubický kraj",
+        8:"Olomoucký kraj",
+        9:"Zlínský kraj",
         10:"Praha",
         11:"Středočeský kraj",
-        12:"Moravskoslezský",
-        13:"Vysočina",
-        14:"Jihomoravský"
+        12:"Moravskoslezský kraj",
+        13:"Vysočina kraj",
+        14:"Jihomoravský kraj"
         }
     #locality_region_id_dict=pd.DataFrame.from_dict(locality_region_id_dict, orient="index", columns=["locality_region_id"])
     #print(locality_region_id_dict)
@@ -125,6 +125,6 @@ def description_items_dict():
 
 columns_w_list = ["transport", "electricity", "traffic_communication", "water", "gas", "waste", "heating", "telecommunication"]
 
-def create_db_table_name(category_main_cb, category_type_cb):
-    db_table_name=db_table_names_main()[category_main_cb] + "_"+ db_table_names_type()[category_type_cb]
+def create_db_table_name(category_main, category_type):
+    db_table_name=db_table_names_main()[category_main] + "_"+ db_table_names_type()[category_type]
     return(db_table_name)

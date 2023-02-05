@@ -287,9 +287,12 @@ def get_re_offers_description(path_to_sqlite, category_main, category_type):
 
     """
         
-    indices=getting_offers_without_downloaded_description(path_to_sqlite, category_main, category_type)
+    indices=getting_offers_without_downloaded_description(path_to_sqlite=str(path_to_sqlite), 
+    category_main=int(category_main), 
+    category_type=int(category_type))
+
     urls=urls_from_indices(indices)
     output_list=get_responses(urls, workers=5)
     df = description_decoding(output_list)
 
-    save_to_db(df, path_to_sqlite, category_main, category_type)
+    save_to_db(df, path_to_sqlite=str(path_to_sqlite), category_main=int(category_main), category_type=int(category_type))
