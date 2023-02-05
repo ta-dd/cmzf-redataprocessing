@@ -333,12 +333,13 @@ def get_re_offers(path_to_sqlite, category_main, category_type, category_sub, lo
     category_main=category_main_input, category_type=category_type_input)
 
 # INPUTS
+sleep(1)
 path_to_sqlite='estate_data.sqlite'
 
 category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
 category_type = 1 # 1=prodej, 2=nájem, 3=dražba
 category_sub = [] # 34=garáže, 52=garážové stání
-locality_region_id = 10 #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+locality_region_id = 13 #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
 get_re_offers(path_to_sqlite="estate_data.sqlite", 
 category_main=1, 
