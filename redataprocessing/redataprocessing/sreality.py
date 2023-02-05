@@ -40,7 +40,13 @@ def download_lists(category_main, category_type, category_sub, locality_region_i
     """
 
     category_sub_string = '%7C'.join(str(v) for v in category_sub)
-    locality_region_id_string = '%7C'.join(str(v) for v in locality_region_id)
+    
+    if isinstance(locality_region_id, int):
+        locality_region_id_string=str(locality_region_id)
+    elif isinstance(locality_region_id, list)
+        locality_region_id_string = '%7C'.join(str(v) for v in locality_region_id)
+    else:
+        print("locality_region_id must be an integer or a list")
 
     collector={}
     i=0
