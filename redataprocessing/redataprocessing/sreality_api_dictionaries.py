@@ -21,7 +21,7 @@ category_type_dict={'sale': 1, 'rent': 2, 'auction': 3}
 
 db_table_names_type={1:"SALE", 2:"RENT", 3:"AUCTION"}
 
-locality_region_id_dict={'Jihočeský kraj': 1, 'Plzeňský kraj': 2, 'Karlovarský kraj': 3, 'Ústecký kraj': 4, 'Liberecký kraj': 5, 'Královéhradecký kraj': 6, 'Pardubický kraj': 7, 'Olomoucký kraj': 8, 'Zlínský kraj': 9, 'Praha': 10, 'Středočeský kraj': 11, 'Moravskoslezský kraj': 12, 'Vysočina kraj': 13, 'Jihomoravský kraj': 14}
+locality_region_id_dict={'Jihočeský kraj': 1, 'Plzeňský kraj': 2, 'Karlovarský kraj': 3, 'Ústecký kraj': 4, 'Liberecký kraj': 5, 'Královéhradecký kraj': 6, 'Pardubický kraj': 7, 'Olomoucký kraj': 8, 'Zlínský kraj': 9, 'Hlavní město Praha': 10, 'Středočeský kraj': 11, 'Moravskoslezský kraj': 12, 'Kraj Vysočina': 13, 'Jihomoravský kraj': 14}
 #{1:"Jihočeský kraj",2:"Plzeňský kraj",3:"Karlovarský kraj",4:"Ústecký kraj",5:"Liberecký kraj",6:"Královéhradecký kraj",
 #7:"Pardubický kraj",8:"Olomoucký kraj",9:"Zlínský kraj",10:"Praha",11:"Středočeský kraj",12:"Moravskoslezský kraj",13:"Vysočina kraj",14:"Jihomoravský kraj"}
 #locality_region_id_dict=pd.DataFrame.from_dict(locality_region_id_dict, orient="index", columns=["locality_region_id"])

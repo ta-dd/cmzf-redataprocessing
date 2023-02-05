@@ -207,8 +207,6 @@ def decode_collector(collector: list, category_main: int):
             estate_relevant['locality'] = estate['locality']
             if category_main == 1:
                 estate_relevant['apartment_type'] = get_flat_type_from_name(estate['name'])
-            estate_relevant['category_type'] = estate['type']
-            estate_relevant['category_main'] = estate['category']
             estate_relevant['is_auction'] = estate['is_auction']
             estate_relevant['exclusively_at_rk'] = estate['exclusively_at_rk']
 
@@ -297,7 +295,7 @@ def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, ca
     con.close()
 
 def get_re_offers(path_to_sqlite: str, category_main: str, category_type: str, 
-locality_region: int, category_sub: list=None):
+locality_region: str|list, category_sub: list=None):
     """
 
     Parameters
@@ -319,27 +317,52 @@ locality_region: int, category_sub: list=None):
     """
 
     # inputs to further functions
-    if category_main not in category_main_dict.keys():
-        raise ValueError("get_re_offers: status must be one of %r." % category_main_dict.keys())
-    if category_type not in category_type_dict.keys():
-        raise ValueError("get_re_offers: status must be one of %r." % category_type_dict.keys())
-    
-    category_main_input=category_main_dict[category_main]
-    category_type_input=category_type_dict[category_type]
+    if isinstance(category_main, str):
+        if category_main not in category_main_dict.keys():
+            raise ValueError("category_main: must be one of %r." % list(category_main_dict.keys()))
+        else:
+            category_main_input=category_main_dict[category_main]
+    else:
+        return TypeError("category_main: must be a string")
 
+    if isinstance(category_main, str):
+        if category_type not in category_type_dict.keys():
+            return ValueError("category_type: must be one of %r." % list(category_type_dict.keys()))
+        else:
+            category_type_input=category_type_dict[category_type]
+    else:
+        return TypeError("category_type: must be a string")
+    
     category_sub_input = []
-    for idx in category_sub:
-        if idx not in category_sub_dict.keys():
-            raise ValueError("get_re_offers: status must be one of %r." % category_sub_dict.keys())
-        category_sub_input.append(category_sub_dict[idx])
+    if isinstance(category_sub, str):
+        if category_sub not in category_sub_dict.keys():
+                return ValueError("locality_region: must be one or more of %r." % list(category_sub_dict.keys()))
+        category_sub_input.append(category_sub_dict[category_sub])
+    elif isinstance(category_sub, list):
+       for idx in category_sub:
+            if idx not in category_sub_dict.keys():
+                return ValueError("category_sub: must be one or more of %r." % list(category_sub_dict.keys()))
+            category_sub_input.append(category_sub_dict[idx])
+    else:
+        return TypeError("category_sub: must be a list of string or an string")
 
     locality_region_id_input = []
-    for idx in locality_region:
-        if idx not in category_sub_dict.keys():
-            raise ValueError("get_re_offers: status must be one of %r." % category_sub_dict.keys())
-        locality_region_id_input.append(category_sub_dict[idx])
-
-    path_to_sqlite_input=path_to_sqlite
+    if isinstance(locality_region, str):
+        if locality_region not in locality_region_id_dict.keys():
+                return ValueError("locality_region: must be one or more of %r." % list(locality_region_id_dict.keys()))
+        locality_region_id_input.append(locality_region_id_dict[locality_region])
+    elif isinstance(locality_region, list):
+       for idx in locality_region:
+            if idx not in locality_region_id_dict.keys():
+                return ValueError("locality_region: must be one or more of %r." % list(locality_region_id_dict.keys()))
+            locality_region_id_input.append(locality_region_id_dict[idx])
+    else:
+        return TypeError("locality_region: must be a list of strings or string")
+    
+    if isinstance(path_to_sqlite, str):
+        path_to_sqlite_input=path_to_sqlite
+    else:
+        return TypeError("path_to_sqlite: must be a string")
     
     # starting functions
     print("initiating download of offers")
@@ -372,6 +395,6 @@ locality_region_id = 13 #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1
 
 get_re_offers(path_to_sqlite="estate_data.sqlite", 
 category_main="apartments", 
-category_type=1, 
+category_type="sale", 
 category_sub=[], 
-locality_region_id=12)
+locality_region=["Královehradecký"])
