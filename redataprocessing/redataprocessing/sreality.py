@@ -320,23 +320,28 @@ locality_region: int, category_sub: list=None):
 
     # inputs to further functions
     if category_main not in category_main_dict.keys():
-        raise ValueError("get_re_offers_description: status must be one of %r." % category_main_dict.keys())
+        raise ValueError("get_re_offers: status must be one of %r." % category_main_dict.keys())
     if category_type not in category_type_dict.keys():
-        raise ValueError("get_re_offers_description: status must be one of %r." % category_type_dict.keys())
+        raise ValueError("get_re_offers: status must be one of %r." % category_type_dict.keys())
     
     category_main_input=category_main_dict[category_main]
     category_type_input=category_type_dict[category_type]
 
     category_sub_input = []
     for idx in category_sub:
+        if idx not in category_sub_dict.keys():
+            raise ValueError("get_re_offers: status must be one of %r." % category_sub_dict.keys())
         category_sub_input.append(category_sub_dict[idx])
 
     locality_region_id_input = []
     for idx in locality_region:
+        if idx not in category_sub_dict.keys():
+            raise ValueError("get_re_offers: status must be one of %r." % category_sub_dict.keys())
         locality_region_id_input.append(category_sub_dict[idx])
 
     path_to_sqlite_input=path_to_sqlite
     
+    # starting functions
     print("initiating download of offers")
 
     df=download_re_offers(category_main=category_main_input, 
