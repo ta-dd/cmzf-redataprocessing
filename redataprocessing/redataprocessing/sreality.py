@@ -412,21 +412,21 @@ locality_region: str|list, category_sub: str|list=None):
     category_main=category_main_input, category_type=category_type_input)
 
 # INPUTS
-sleep(2)
-path_to_sqlite='estate_data.sqlite'
+#sleep(2)
+#path_to_sqlite='estate_data.sqlite'
 
-category_main = "apartments" # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
-category_type = "sale" # 1=prodej, 2=nájem, 3=dražba
-category_sub = [] # 34=garáže, 52=garážové stání
-locality_region = ["Královéhradecký kraj"] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+#category_main = "apartments" # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+#category_type = "sale" # 1=prodej, 2=nájem, 3=dražba
+#category_sub = [] # 34=garáže, 52=garážové stání
+#locality_region = ["Královéhradecký kraj"] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
-category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
-category_type = 1 # 1=prodej, 2=nájem, 3=dražba
-category_sub = [] # 34=garáže, 52=garážové stání
-locality_region_id = [13] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+#category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+#category_type = 1 # 1=prodej, 2=nájem, 3=dražba
+#category_sub = [] # 34=garáže, 52=garážové stání
+#locality_region_id = [13] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
-get_re_offers(path_to_sqlite="estate_data.sqlite", 
-category_main="apartments", 
-category_type="sale", 
-category_sub=[], 
-locality_region=["Královéhradecký kraj"])
+#get_re_offers(path_to_sqlite="estate_data.sqlite", 
+#category_main="apartments", 
+#category_type="sale", 
+#category_sub=[], 
+#locality_region=["Královéhradecký kraj"])
