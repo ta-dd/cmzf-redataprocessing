@@ -255,17 +255,16 @@ def save_to_db(df: pd.DataFrame, path_to_sqlite: str, category_main: int, catego
 
     # Creates a table or appends if exists
     con = sqlite3.connect(path_to_sqlite)
-    c=con.cursor()
     
     db_table_name=create_db_table_name(category_main, category_type)
     db_table_name_description="DESCRIPTION_"+db_table_name
 
+    # if table with description exists - addition of columns that are not in description table
     # checking if db exists
+    c=con.cursor()
     c.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{}' ".format(db_table_name_description))
 
-    # loading indices for which no description was downloaded
     if c.fetchone()[0]==1:
-        # if table with description exists - addition of columns that are not in description table
         cursor = con.execute('select * from {}'.format(db_table_name_description))
         list_of_colnames=list(map(lambda x: x[0], cursor.description))
 

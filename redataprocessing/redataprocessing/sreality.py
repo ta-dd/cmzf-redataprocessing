@@ -20,7 +20,7 @@ from redataprocessing.sreality_description_download_decoding import *
 
 # requesting information from sreality api
 
-def download_lists(category_main: int, category_type: int, locality_region_id: int|list, category_sub: list=None):
+def download_lists(category_main: int, category_type: int, locality_region_id: int|list, category_sub: int|list=None):
     """
 
     Parameters
@@ -45,14 +45,14 @@ def download_lists(category_main: int, category_type: int, locality_region_id: i
     elif isinstance(category_sub, list):
         category_sub_string = '%7C'.join(str(v) for v in category_sub)
     else:
-        print("TypeError: category_sub must be an integer or a list")
+        raise TypeError("category_sub: must be an integer or a list")
     
     if isinstance(locality_region_id, int):
         locality_region_id_string=str(locality_region_id)
     elif isinstance(locality_region_id, list):
         locality_region_id_string = '%7C'.join(str(v) for v in locality_region_id)
     else:
-        print("TypeError: locality_region_id must be an integer or a list")
+        raise TypeError("locality_region_id: must be an integer or a list")
 
     collector={}
     i=0
@@ -67,9 +67,11 @@ def download_lists(category_main: int, category_type: int, locality_region_id: i
         
         params={"category_main_cb":category_main,
             "category_type_cb":category_type,
-            "locality_region_id":locality_region_id_string,
             "per_page":60,
             "page":i}
+
+        if len(locality_region_id)>0:
+            params=params|{"locality_region_id":locality_region_id_string}
             
         if len(category_sub)>0:
             params=params|{"category_sub_cb":category_sub_string}
@@ -80,6 +82,7 @@ def download_lists(category_main: int, category_type: int, locality_region_id: i
         sleep(randint(1,3))
 
         if r.status_code==404:
+            print(f"Code {r.status_code} was returned.")
             break
         elif r.status_code==200:
             r_dict=r.json()
@@ -262,7 +265,12 @@ def download_re_offers(category_main: int,
 
     df=decode_collector(collector, category_main=category_main_input)
     
-    df["locality_region_id"] = locality_region_id_input
+    if isinstance(locality_region_id, int):
+        df["locality_region_id"][0]
+    elif isinstance(locality_region_id, list):
+        df["locality_region_id"] = locality_region_id_input[0]
+    else:
+        print("TypeError: locality_region_id must be an integer or a list")
     
     return df
 
@@ -287,6 +295,18 @@ def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, ca
     # Creates a table or appends if exists
     db_table_name=create_db_table_name(category_main=category_main, category_type=category_type)
     db_table_name_offers="OFFERS_"+db_table_name
+
+    # if table with offers exists - addition of columns that are not in description table
+    # checking if db exists
+    c=con.cursor()
+    c.execute("SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{}' ".format(db_table_name_offers))
+    if c.fetchone()[0]==1:
+        cursor = con.execute('select * from {}'.format(db_table_name_offers))
+        list_of_colnames=list(map(lambda x: x[0], cursor.description))
+
+        for i in df.columns:
+            if i not in list_of_colnames:
+                c.execute("ALTER TABLE {} ADD {} VARCHAR(100);".format(db_table_name_offers, i))
 
     df.to_sql(name = db_table_name_offers, con= con, index = False, if_exists = 'append')
     # Loading again: df = pd.read_sql('SELECT * FROM OFFERS_TABLE', con = con)
@@ -344,7 +364,7 @@ locality_region: str|list, category_sub: str|list=None):
                 raise ValueError("category_sub: must be one or more of %r." % list(category_sub_dict.keys()))
             category_sub_input.append(category_sub_dict[idx])
     else:
-        raise TypeError("category_sub: must be a list of string or an string")
+        raise TypeError("category_sub: must be a list of string or a string")
 
     locality_region_id_input = []
     if isinstance(locality_region, str):
@@ -354,10 +374,12 @@ locality_region: str|list, category_sub: str|list=None):
     elif isinstance(locality_region, list):
        for idx in locality_region:
             if idx not in locality_region_id_dict.keys():
-                raise ValueError("locality_region: must be one or more of %r." % list(locality_region_id_dict.keys()))
+                raise ValueError("locality_region: must be one of %r." % list(locality_region_id_dict.keys()))
             locality_region_id_input.append(locality_region_id_dict[idx])
+    elif len(locality_region)>1:
+        raise ValueError("locality_region: this package version is not able to handle more than one value")
     else:
-        raise TypeError("locality_region: must be a list of strings or string")
+        raise TypeError("locality_region: must be a list of strings or a string")
     
     if isinstance(path_to_sqlite, str):
         path_to_sqlite_input=path_to_sqlite
@@ -391,7 +413,12 @@ path_to_sqlite='estate_data.sqlite'
 category_main = "apartments" # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
 category_type = "sale" # 1=prodej, 2=nájem, 3=dražba
 category_sub = [] # 34=garáže, 52=garážové stání
-locality_region_id = ["Královéhradecký kraj"] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+locality_region = ["Královéhradecký kraj"] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+
+category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+category_type = 1 # 1=prodej, 2=nájem, 3=dražba
+category_sub = [] # 34=garáže, 52=garážové stání
+locality_region_id = [13] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
 get_re_offers(path_to_sqlite="estate_data.sqlite", 
 category_main="apartments", 
