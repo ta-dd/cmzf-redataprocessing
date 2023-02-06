@@ -1,9 +1,12 @@
 
-import redataprocessing as rdp
+import redataprocessing.sreality as rdp
 
 from inspect import getmembers, isfunction
 
-print(getmembers(rdp.sreality, isfunction))
+import redataprocessing
+from redataprocessing.sreality import *
+
+print(getmembers(rdp, isfunction))
 
 import imp
 import os
@@ -18,4 +21,6 @@ def package_contents(package_name):
         for module in os.listdir(pathname)
         if module.endswith(MODULE_EXTENSIONS)])
 
-package_contents("rdp.sreality")
+package_contents("rdp")
+
+get_re_offers("real_estate_from_package.sqlite", category_main="apartments", category_type="sale", locality_region=[])
