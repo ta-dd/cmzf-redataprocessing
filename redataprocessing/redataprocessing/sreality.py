@@ -396,12 +396,17 @@ locality_region: str|list, category_sub: str|list=None):
 
     db_table_name=create_db_table_name(category_main=category_main_input, category_type=category_type_input)
     db_table_name_offers="OFFERS_"+db_table_name
+
     print("saving offers to database (table name {})".format(db_table_name_offers))
 
     save_re_offers(df, 
     path_to_sqlite=path_to_sqlite_input, 
     category_main=category_main_input, 
     category_type=category_type_input)
+
+    print("saved offers to database (table name {})".format(db_table_name_offers))
+
+    print("initiating download of description of offers")
 
     get_re_offers_description(path_to_sqlite=path_to_sqlite_input, 
     category_main=category_main_input, category_type=category_type_input)

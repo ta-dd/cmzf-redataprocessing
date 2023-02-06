@@ -303,7 +303,10 @@ def get_re_offers_description(path_to_sqlite, category_main, category_type):
 
     urls=urls_from_indices(indices)
     output_list=get_responses(urls, workers=20)
+
+    print("decoding responses of descriptions")
     df = description_decoding(output_list)
+    print("finished decoding responses of descriptions")
 
     db_table_name=create_db_table_name(category_main=category_main_input, category_type=category_type_input)
     db_table_name_description="DESCRIPTION_"+db_table_name
