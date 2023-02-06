@@ -52,7 +52,7 @@ description_items_dict={"Zlevněno":"discounted",
     "Komunikace":"traffic_communication", 
     "Bezbariérový":"barrier_free", 
     "ID":"id", 
-    #"Cena":"price", 
+    "Cena":"price", 
     "Energetická náročnost budovy":"energy_efficient_rating", 
     "Výtah":"lift", 
     "Typ domu":"building_floor_type", 
@@ -109,5 +109,3 @@ def create_db_table_name(category_main, category_type):
 
 def get_swap_dict(d):
     return {v: k for k, v in d.items()}
-
-get_swap_dict(category_sub_dict)

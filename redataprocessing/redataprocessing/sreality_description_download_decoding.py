@@ -3,16 +3,10 @@ import pandas as pd
 import numpy as np
 import sqlite3
 
-import asyncio
-import aiohttp
-import ssl
-import certifi
-
-import nest_asyncio
+from tqdm.auto import tqdm
 
 from redataprocessing.sreality_api_dictionaries import *
-
-# async download of offer description
+from redataprocessing.sreality_description_asyncio import *
 
 # preparation of urls for async
 def getting_offers_without_downloaded_description(path_to_sqlite: str, category_main: int, category_type: int):
@@ -68,60 +62,6 @@ def urls_from_indices(indices):
     urls=["https://www.sreality.cz/api/cs/v2/estates/"+str(i) for i in indices]
     return urls
 
-# async download
-nest_asyncio.apply()
-
-async def get_response(session, url):
-    sslcontext = ssl.create_default_context(cafile=certifi.where())
-
-    try:
-        async with session.get(url, ssl=sslcontext) as response:
-            response_text =  await response.json()
-            #here response can be processed further
-            return response_text
-    except aiohttp.ClientError as e:
-        return f"Error occured for {url} : {e}"
-
-async def main(urls, chunk_size):
-    async with aiohttp.ClientSession() as session: 
-        all_responses=[]
-        chunks = [urls[i:i+chunk_size] for i in range(0, len(urls), chunk_size)]
-
-        for chunk_idx, chunk in enumerate(chunks):
-            #here you process first batch -> request go async
-
-            tasks = [get_response(session, url) for url in chunk]
-            #here they come together
-            responses = await asyncio.gather(*tasks)
-
-            print(f'downloaded description of offers: {(chunk_idx+1)*chunk_size} out of {len(urls)}')
-            
-            #here we sqlite can be used
-            #to name each observation you could use: response["_embedded"]["favourite"]["_links"]["self"]["href"][17:]
-            all_responses=all_responses+responses
-        return all_responses # returns list
-
-def get_responses(urls, workers=5):
-    """
-
-    Parameters
-    ----------
-    urls :
-        
-    workers :
-         (Default value = 5)
-
-    Returns
-    -------
-
-    """
-    loop = asyncio.get_event_loop()
-    output_list = loop.run_until_complete(main(urls, workers))
-    
-    # Getting rid of NaN rows
-    output_list = [i for i in output_list if i not in [item for item in output_list if len(item) == 1]]
-    return output_list
-
 # %%
 # preparation of functions for decoding
 
@@ -132,7 +72,6 @@ def note_missing_values(r_dict_names_all):
     ----------
     r_dict_names_all :
         
-
     Returns
     -------
 
@@ -175,8 +114,11 @@ def description_decoding(responses_list):
     description_individual = {}
     r_dict_names_all=pd.Series(dtype="object")
     r_dict_types_all=pd.DataFrame(columns=["name", "type"])
+    
+    total=len(responses_list)
 
-    for r_dict in responses_list:
+    with tqdm(total=total, desc="decoding responses with description of offers: ") as pbar:
+        for r_dict in responses_list:
             try:
                 info_relevant = pd.Series(dtype="object")
                 info_relevant["description"]=r_dict["text"]["value"]
@@ -205,6 +147,10 @@ def description_decoding(responses_list):
                 description_individual[r_dict["_embedded"]["favourite"]["_links"]["self"]["href"][17:]] = info_relevant
             except:
                 print("Something wrong. I guess, the offer disappeared just a moment ago.")
+        
+            pbar.update(1)
+
+              
     note_missing_values(r_dict_names_all)
 
     df_final=individual_description_into_pd_df(description_individual)
@@ -304,9 +250,7 @@ def get_re_offers_description(path_to_sqlite, category_main, category_type):
     urls=urls_from_indices(indices)
     output_list=get_responses(urls, workers=20)
 
-    print("decoding responses of descriptions")
     df = description_decoding(output_list)
-    print("finished decoding responses of descriptions")
 
     db_table_name=create_db_table_name(category_main=category_main_input, category_type=category_type_input)
     db_table_name_description="DESCRIPTION_"+db_table_name
