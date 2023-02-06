@@ -295,7 +295,7 @@ def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, ca
     con.close()
 
 def get_re_offers(path_to_sqlite: str, category_main: str, category_type: str, 
-locality_region: str|list, category_sub: list=None):
+locality_region: str|list, category_sub: str|list=None):
     """
 
     Parameters
@@ -323,46 +323,46 @@ locality_region: str|list, category_sub: list=None):
         else:
             category_main_input=category_main_dict[category_main]
     else:
-        return TypeError("category_main: must be a string")
+        raise TypeError("category_main: must be a string")
 
-    if isinstance(category_main, str):
+    if isinstance(category_type, str):
         if category_type not in category_type_dict.keys():
-            return ValueError("category_type: must be one of %r." % list(category_type_dict.keys()))
+            raise ValueError("category_type: must be one of %r." % list(category_type_dict.keys()))
         else:
             category_type_input=category_type_dict[category_type]
     else:
-        return TypeError("category_type: must be a string")
+        raise TypeError("category_type: must be a string")
     
     category_sub_input = []
     if isinstance(category_sub, str):
         if category_sub not in category_sub_dict.keys():
-                return ValueError("locality_region: must be one or more of %r." % list(category_sub_dict.keys()))
+                raise ValueError("locality_region: must be one or more of %r." % list(category_sub_dict.keys()))
         category_sub_input.append(category_sub_dict[category_sub])
     elif isinstance(category_sub, list):
        for idx in category_sub:
             if idx not in category_sub_dict.keys():
-                return ValueError("category_sub: must be one or more of %r." % list(category_sub_dict.keys()))
+                raise ValueError("category_sub: must be one or more of %r." % list(category_sub_dict.keys()))
             category_sub_input.append(category_sub_dict[idx])
     else:
-        return TypeError("category_sub: must be a list of string or an string")
+        raise TypeError("category_sub: must be a list of string or an string")
 
     locality_region_id_input = []
     if isinstance(locality_region, str):
         if locality_region not in locality_region_id_dict.keys():
-                return ValueError("locality_region: must be one or more of %r." % list(locality_region_id_dict.keys()))
+                raise ValueError("locality_region: must be one or more of %r." % list(locality_region_id_dict.keys()))
         locality_region_id_input.append(locality_region_id_dict[locality_region])
     elif isinstance(locality_region, list):
        for idx in locality_region:
             if idx not in locality_region_id_dict.keys():
-                return ValueError("locality_region: must be one or more of %r." % list(locality_region_id_dict.keys()))
+                raise ValueError("locality_region: must be one or more of %r." % list(locality_region_id_dict.keys()))
             locality_region_id_input.append(locality_region_id_dict[idx])
     else:
-        return TypeError("locality_region: must be a list of strings or string")
+        raise TypeError("locality_region: must be a list of strings or string")
     
     if isinstance(path_to_sqlite, str):
         path_to_sqlite_input=path_to_sqlite
     else:
-        return TypeError("path_to_sqlite: must be a string")
+        raise TypeError("path_to_sqlite: must be a string")
     
     # starting functions
     print("initiating download of offers")
@@ -388,13 +388,13 @@ locality_region: str|list, category_sub: list=None):
 sleep(2)
 path_to_sqlite='estate_data.sqlite'
 
-category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
-category_type = 1 # 1=prodej, 2=nájem, 3=dražba
+category_main = "apartments" # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+category_type = "sale" # 1=prodej, 2=nájem, 3=dražba
 category_sub = [] # 34=garáže, 52=garážové stání
-locality_region_id = 13 #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+locality_region_id = ["Královéhradecký kraj"] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
 get_re_offers(path_to_sqlite="estate_data.sqlite", 
 category_main="apartments", 
 category_type="sale", 
 category_sub=[], 
-locality_region=["Královehradecký"])
+locality_region=["Královéhradecký kraj"])
