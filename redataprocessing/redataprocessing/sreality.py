@@ -12,7 +12,9 @@ from datetime import date
 from time import sleep 
 from random import randint
 
-from typing import Dict
+from tqdm.auto import tqdm
+
+from typing import Dict, Union, Optional
 import re 
 
 from redataprocessing.sreality_api_dictionaries import *
@@ -20,7 +22,7 @@ from redataprocessing.sreality_description_download_decoding import *
 
 # requesting information from sreality api
 
-def download_lists(category_main: int, category_type: int, locality_region_id: int|list, category_sub: int|list=None):
+def download_lists(category_main: int, category_type: int, locality_region_id: Optional[Union[int, list]], category_sub: Optional[Union[int, list]]=None):
     """
 
     Parameters
@@ -193,7 +195,7 @@ def decode_collector(collector: list, category_main: int):
     """
     estates_individual = {}
 
-    for page, r in collector.items():
+    for page, r in tqdm(collector.items(),desc="decoding pages with offers: "):
         for estate in r['_embedded']['estates']: 
 
             estate_relevant = pd.Series(dtype="object")
@@ -315,7 +317,7 @@ def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, ca
     con.close()
 
 def get_re_offers(path_to_sqlite: str, category_main: str, category_type: str, 
-locality_region: str|list, category_sub: str|list=None):
+locality_region: Optional[Union[int, list]], category_sub: Optional[Union[int, list]]=None):
     """
 
     Parameters
@@ -335,7 +337,7 @@ locality_region: str|list, category_sub: str|list=None):
     -------
 
     """
-
+    
     # inputs to further functions
     if isinstance(category_main, str):
         if category_main not in category_main_dict.keys():
@@ -413,20 +415,16 @@ locality_region: str|list, category_sub: str|list=None):
 
 # INPUTS
 #sleep(2)
-#path_to_sqlite='estate_data.sqlite'
+path_to_sqlite='estate_data.sqlite'
 
-#category_main = "apartments" # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
-#category_type = "sale" # 1=prodej, 2=nájem, 3=dražba
-#category_sub = [] # 34=garáže, 52=garážové stání
-#locality_region = ["Královéhradecký kraj"] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+category_main = "apartments" # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+category_type = "sale" # 1=prodej, 2=nájem, 3=dražba
+category_sub = [] # 34=garáže, 52=garážové stání
+locality_region = ["Královéhradecký kraj"] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
 #category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
 #category_type = 1 # 1=prodej, 2=nájem, 3=dražba
 #category_sub = [] # 34=garáže, 52=garážové stání
 #locality_region_id = [13] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
-#get_re_offers(path_to_sqlite="estate_data.sqlite", 
-#category_main="apartments", 
-#category_type="sale", 
-#category_sub=[], 
-#locality_region=["Královéhradecký kraj"])
+#get_re_offers(path_to_sqlite="estate_data.sqlite", category_main="apartments", category_type="sale", category_sub=[], locality_region=["Královéhradecký kraj"])
