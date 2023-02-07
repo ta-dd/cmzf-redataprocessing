@@ -8,6 +8,7 @@ setup.py
 redataprocessing/__init__.py
 redataprocessing/sreality.py
 redataprocessing/sreality_api_dictionaries.py
+redataprocessing/sreality_description_asyncio.py
 redataprocessing/sreality_description_download_decoding.py
 redataprocessing.egg-info/PKG-INFO
 redataprocessing.egg-info/SOURCES.txt

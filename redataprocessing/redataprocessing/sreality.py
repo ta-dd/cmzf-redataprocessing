@@ -1,3 +1,44 @@
+"""Example NumPy style docstrings.
+
+This module demonstrates documentation as specified by the `NumPy
+Documentation HOWTO`_. Docstrings may extend over multiple lines. Sections
+are created with a section header followed by an underline of equal length.
+
+Example
+-------
+Examples can be given using either the ``Example`` or ``Examples``
+sections. Sections support any reStructuredText formatting, including
+literal blocks::
+
+    $ python example_numpy.py
+
+
+Section breaks are created with two blank lines. Section breaks are also
+implicitly created anytime a new section starts. Section bodies *may* be
+indented:
+
+Notes
+-----
+    This is an example of an indented section. It's like any other section,
+    but the body is indented to help it stand out from surrounding text.
+
+If a section is indented, then a section break is created by
+resuming unindented text.
+
+Attributes
+----------
+module_level_variable1 : int
+    Module level variables may be documented in either the ``Attributes``
+    section of the module docstring, or in an inline docstring immediately
+    following the variable.
+
+    Either form is acceptable, but the two should not be mixed. Choose
+    one convention to document module level variables and be consistent
+    with it.
+
+"""
+
+
 # importing all packages
 import pandas as pd
 import numpy as np
@@ -14,7 +55,7 @@ from random import randint
 
 from tqdm.auto import tqdm
 
-from typing import Dict, Union, Optional
+from typing import Dict, Union, Optional, Tuple
 import re 
 
 from redataprocessing.sreality_api_dictionaries import *
@@ -22,7 +63,7 @@ from redataprocessing.sreality_description_download_decoding import *
 
 # requesting information from sreality api
 
-def download_lists(category_main: int, category_type: int, locality_region_id: Optional[Union[int, list]], category_sub: Optional[Union[int, list]]=None):
+def download_lists(category_main: int, category_type: int, locality_region_id: Optional[Union[int, list]], category_sub: Optional[Union[int, list]]=None) -> list:
     """
 
     Parameters
@@ -110,7 +151,7 @@ def download_lists(category_main: int, category_type: int, locality_region_id: O
 
 # preparation of functions for decoding
 
-def get_gps_lat_lon(estate_raw: Dict):
+def get_gps_lat_lon(estate_raw: Dict) -> Tuple[str, str]:
     """
 
     Parameters
@@ -124,7 +165,7 @@ def get_gps_lat_lon(estate_raw: Dict):
     gps_ = estate_raw['gps']
     return gps_['lat'], gps_['lon']
 
-def get_flat_type_from_name(name: str):
+def get_flat_type_from_name(name: str) -> str:
     """
 
     Parameters
@@ -138,7 +179,7 @@ def get_flat_type_from_name(name: str):
     """
     return name.split()[2]
 
-def get_area_from_name(name: str):
+def get_area_from_name(name: str) -> int:
     """
 
     Parameters
@@ -158,7 +199,7 @@ def get_area_from_name(name: str):
         name_ = name_.split()
         return int(''.join(re.findall('(\d*)', ''.join(name_))))
 
-def get_company_details(estate_raw: Dict):
+def get_company_details(estate_raw: Dict) -> Tuple[str, str]:
     """
 
     Parameters
@@ -181,7 +222,7 @@ def get_company_details(estate_raw: Dict):
 
 # wrapping up all decoding
 
-def decode_collector(collector: list, category_main: int):
+def decode_collector(collector: list, category_main: int) -> pd.DataFrame:
     """
 
     Parameters
@@ -237,7 +278,7 @@ def decode_collector(collector: list, category_main: int):
 def download_re_offers(category_main: int, 
     category_type: int, 
     locality_region_id: int, 
-    category_sub: list=None):
+    category_sub: list=None) -> pd.DataFrame:
     """
 
     Parameters
@@ -278,7 +319,7 @@ def download_re_offers(category_main: int,
 
 # Saving data (SQLite)
 
-def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, category_type: int):
+def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, category_type: int) -> None:
     """
 
     Parameters
@@ -317,13 +358,13 @@ def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, ca
     con.close()
 
 def get_re_offers(path_to_sqlite: str, category_main: str, category_type: str, 
-locality_region: Optional[Union[int, list]], category_sub: Optional[Union[int, list]]=None):
+locality_region: Optional[Union[int, list]], category_sub: Optional[Union[int, list]]=None) -> None:
     """
 
     Parameters
     ----------
     path_to_sqlite :
-        
+        Path to sqlite database. If the database does not exist it will be created base on name and path provided.
     category_main :
         
     category_type :
@@ -355,6 +396,9 @@ locality_region: Optional[Union[int, list]], category_sub: Optional[Union[int, l
     else:
         raise TypeError("category_type: must be a string")
     
+    if category_sub is None:
+        category_sub=[]
+
     category_sub_input = []
     if isinstance(category_sub, str):
         if category_sub not in category_sub_dict.keys():
@@ -366,7 +410,10 @@ locality_region: Optional[Union[int, list]], category_sub: Optional[Union[int, l
                 raise ValueError("category_sub: must be one or more of %r." % list(category_sub_dict.keys()))
             category_sub_input.append(category_sub_dict[idx])
     else:
-        raise TypeError("category_sub: must be a list of string or a string")
+        raise TypeError("category_sub: must be a list of strings or a string")
+
+    if locality_region is None:
+        locality_region=[]
 
     locality_region_id_input = []
     if isinstance(locality_region, str):
@@ -384,7 +431,13 @@ locality_region: Optional[Union[int, list]], category_sub: Optional[Union[int, l
         raise TypeError("locality_region: must be a list of strings or a string")
     
     if isinstance(path_to_sqlite, str):
-        path_to_sqlite_input=path_to_sqlite
+        if os.path.dirname(path_to_sqlite)=="":
+            print("resulting data will be saved to current working directory ({})".format(os. getcwd()))
+            path_to_sqlite_input=path_to_sqlite
+        elif os.path.exists(os.path.dirname(path_to_sqlite)):
+            path_to_sqlite_input=path_to_sqlite
+        else:
+            FileNotFoundError("{} folder does not exist!".format(os.path.dirname(path_to_sqlite)))
     else:
         raise TypeError("path_to_sqlite: must be a string")
     

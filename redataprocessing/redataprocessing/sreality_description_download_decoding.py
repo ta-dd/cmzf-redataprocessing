@@ -1,7 +1,52 @@
-# %%
+"""Example NumPy style docstrings.
+
+This module demonstrates documentation as specified by the `NumPy
+Documentation HOWTO`_. Docstrings may extend over multiple lines. Sections
+are created with a section header followed by an underline of equal length.
+
+Example
+-------
+Examples can be given using either the ``Example`` or ``Examples``
+sections. Sections support any reStructuredText formatting, including
+literal blocks::
+
+    $ python example_numpy.py
+
+
+Section breaks are created with two blank lines. Section breaks are also
+implicitly created anytime a new section starts. Section bodies *may* be
+indented:
+
+Notes
+-----
+    This is an example of an indented section. It's like any other section,
+    but the body is indented to help it stand out from surrounding text.
+
+If a section is indented, then a section break is created by
+resuming unindented text.
+
+Attributes
+----------
+module_level_variable1 : int
+    Module level variables may be documented in either the ``Attributes``
+    section of the module docstring, or in an inline docstring immediately
+    following the variable.
+
+    Either form is acceptable, but the two should not be mixed. Choose
+    one convention to document module level variables and be consistent
+    with it.
+
+
+.. _NumPy Documentation HOWTO:
+   https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt
+
+"""
+
 import pandas as pd
 import numpy as np
 import sqlite3
+
+from typing import Dict
 
 from tqdm.auto import tqdm
 
@@ -9,7 +54,7 @@ from redataprocessing.sreality_api_dictionaries import *
 from redataprocessing.sreality_description_asyncio import *
 
 # preparation of urls for async
-def getting_offers_without_downloaded_description(path_to_sqlite: str, category_main: int, category_type: int):
+def getting_offers_without_downloaded_description(path_to_sqlite: str, category_main: int, category_type: int) -> list:
     """
 
     Parameters
@@ -47,7 +92,7 @@ def getting_offers_without_downloaded_description(path_to_sqlite: str, category_
     indices=indices["hash_id"]
     return indices
 
-def urls_from_indices(indices):
+def urls_from_indices(indices:list) -> list:
     """
 
     Parameters
@@ -65,7 +110,7 @@ def urls_from_indices(indices):
 # %%
 # preparation of functions for decoding
 
-def note_missing_values(r_dict_names_all):
+def note_missing_values(r_dict_names_all:Dict):
     """
 
     Parameters
@@ -79,7 +124,7 @@ def note_missing_values(r_dict_names_all):
     print("Add these values to description_items_dict in sreality_api_dictionaries.py:")
     print(r_dict_names_all[~r_dict_names_all.isin(description_items_dict.keys())])
 
-def individual_description_into_pd_df(description_individual):
+def individual_description_into_pd_df(description_individual) -> pd.DataFrame:
     """
 
     Parameters
@@ -98,13 +143,13 @@ def individual_description_into_pd_df(description_individual):
     return df_desc
 
 # decoding of requests
-def description_decoding(responses_list):
+def description_decoding(responses_list: list) -> pd.DataFrame:
     """
 
     Parameters
     ----------
-    responses_list :
-        
+    responses_list : list : list of responses of real estate descriptions downloaded from sreality
+    
 
     Returns
     -------
@@ -161,7 +206,7 @@ def description_decoding(responses_list):
 # save of description data to SQLite
 
 # We transform columns with list so we could save to DB
-def transformer(value):
+def transformer(value) -> str:
     """
 
     Parameters
@@ -184,12 +229,14 @@ def save_to_db(df: pd.DataFrame, path_to_sqlite: str, category_main: int, catego
 
     Parameters
     ----------
-    df : pandas data frame
+    df : pandas data frame : 
         
-    path_to_sqlite : string of path to sqlite database where the dataframe will be stored
+    path_to_sqlite : str : 
+        path to sqlite database where the dataframe will be stored
         
-    columns_w_list :
-         (Default value = columns_w_list)
+    category_main : int :
+
+    category_type : int : 
 
     Returns
     -------
@@ -223,19 +270,22 @@ def save_to_db(df: pd.DataFrame, path_to_sqlite: str, category_main: int, catego
     # Closing the connection
     con.close()
 
-def get_re_offers_description(path_to_sqlite, category_main, category_type):
+def get_re_offers_description(path_to_sqlite: str, category_main: int, category_type: int):
     """
 
     Parameters
     ----------
-    path_to_sqlite : string of path to sqlite database where table with offers is already stored
-    category_main : 
+    path_to_sqlite : str : 
+        path to sqlite database where table with offers is already stored
+    category_main : int : 
+        code of main real estate category
     category_type : 
+        code of real estate type
         
     Returns
     -------
-    This function downloads description of all offers that do not have the description already downloaded.
-    Creates a table in the sqlite database. If the table already exists it appends new data to the table.
+    This function downloads description of all offers of chosen category in the database that do not have the description already downloaded.
+    Creates a table in the sqlite database. If the table already exists it appends new data to the respective table.
 
     """
     
