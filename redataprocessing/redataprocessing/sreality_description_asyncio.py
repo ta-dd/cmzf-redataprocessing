@@ -1,44 +1,8 @@
 """Asynchronous download of description of sreality offers.
 
 This module contains async functions for asynchronous requesting of
-description data of offers that were already downloaded from sreality
-based on their ids.
-
-Example
--------
-Examples can be given using either the ``Example`` or ``Examples``
-sections. Sections support any reStructuredText formatting, including
-literal blocks::
-
-    $ python example_numpy.py
-
-
-Section breaks are created with two blank lines. Section breaks are also
-implicitly created anytime a new section starts. Section bodies *may* be
-indented:
-
-Notes
------
-    This is an example of an indented section. It's like any other section,
-    but the body is indented to help it stand out from surrounding text.
-
-If a section is indented, then a section break is created by
-resuming unindented text.
-
-Attributes
-----------
-module_level_variable1 : int
-    Module level variables may be documented in either the ``Attributes``
-    section of the module docstring, or in an inline docstring immediately
-    following the variable.
-
-    Either form is acceptable, but the two should not be mixed. Choose
-    one convention to document module level variables and be consistent
-    with it.
-
-
-.. _NumPy Documentation HOWTO:
-   https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt
+description data. Description data is requested for those offers that 
+were already downloaded from sreality based on their hash_id identificator.
 
 """
 
@@ -52,7 +16,7 @@ import nest_asyncio
 # async download of offer description
 nest_asyncio.apply()
 
-async def get_response(session, url):
+async def get_response(session, url: str):
     sslcontext = ssl.create_default_context(cafile=certifi.where())
 
     try:
@@ -64,7 +28,7 @@ async def get_response(session, url):
     except aiohttp.ClientError as e:
         return f"Error occured for {url} : {e}"
 
-async def main(urls, chunk_size):
+async def main(urls: list, chunk_size: int) -> list:
     async with aiohttp.ClientSession() as session: 
         all_responses=[]
         chunks = [urls[i:i+chunk_size] for i in range(0, len(urls), chunk_size)]
@@ -83,7 +47,7 @@ async def main(urls, chunk_size):
             all_responses=all_responses+responses
         return all_responses # returns list
 
-def get_responses(urls, workers=5):
+def get_responses(urls: list, workers:int=5) -> list:
     """
 
     Parameters
