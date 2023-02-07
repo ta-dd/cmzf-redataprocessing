@@ -1,13 +1,12 @@
 
 # redataprocessing: tool for requesting, decoding and storing real estate data from Sreality API
-[![PyPI Latest Release](https://img.shields.io/pypi/v/pandas.svg)](https://pypi.org/project/pandas/)
 
 ## What is it?
 
 **redataprocessing** is a Python package that provides functions for requesting data on
 real estate offers from [**Sreality**](https://www.sreality.cz) API based on few categories. 
-Moreover, it contains functions for decoding of requests into pandas dataframe and their storage
-to SQLite.
+Moreover, it contains functions for decoding of requests into `pandas DataFrame` and their storage
+to `SQLite`.
 
 ## Main Features
 Here are few functionalities of **redataprocessing**:
@@ -40,7 +39,7 @@ python setup.py install
 
 ## Background
 Work on ``redataprocessing`` started as a university course project at 
-[Institute of Economic Studies](https://www.aqr.com/) in winter semester 2022/2023.
+[Institute of Economic Studies](https://ies.fsv.cuni.cz) in winter semester 2022/2023.
 
 ## Getting Help
 
