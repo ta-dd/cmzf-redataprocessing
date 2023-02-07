@@ -1,43 +1,17 @@
-"""Example NumPy style docstrings.
+"""Downloading and storing sreality offers to SQLite database.
 
-This module demonstrates documentation as specified by the `NumPy
-Documentation HOWTO`_. Docstrings may extend over multiple lines. Sections
-are created with a section header followed by an underline of equal length.
+This module contains functions that send requests to Sreality API,
+get json data, decode the data and store it into SQLite database. 
+List with offers and their detiled descriptions are requested separately.
+All functions are wrapped up in function get_re_offers.
 
 Example
 -------
-Examples can be given using either the ``Example`` or ``Examples``
-sections. Sections support any reStructuredText formatting, including
-literal blocks::
+Example of simplest use of this module could be found in the following file:
 
-    $ python example_numpy.py
-
-
-Section breaks are created with two blank lines. Section breaks are also
-implicitly created anytime a new section starts. Section bodies *may* be
-indented:
-
-Notes
------
-    This is an example of an indented section. It's like any other section,
-    but the body is indented to help it stand out from surrounding text.
-
-If a section is indented, then a section break is created by
-resuming unindented text.
-
-Attributes
-----------
-module_level_variable1 : int
-    Module level variables may be documented in either the ``Attributes``
-    section of the module docstring, or in an inline docstring immediately
-    following the variable.
-
-    Either form is acceptable, but the two should not be mixed. Choose
-    one convention to document module level variables and be consistent
-    with it.
+    examples.py
 
 """
-
 
 # importing all packages
 import pandas as pd
@@ -68,20 +42,19 @@ def download_lists(category_main: int, category_type: int, locality_region_id: O
 
     Parameters
     ----------
-    category_main : code of main real estate category
-                
-    category_type : code of real estate type
+    category_main : int :
+        code of main real estate category
+    category_type : int :
+        code of real estate type
+    category_sub : int :
+        code of real estate subcategory
+    locality_region_id : int :
+        indicator of region of the Czech Republic
         
-    category_sub : code of real estate category_sub
-        
-    locality_region_id : indicator of locality_region
-        
-
     Returns
     -------
-    collertor which is the list list containing all requests as json
+    This function returns a collector which is a list containing all requests as json.
     """
-
 
     if isinstance(category_sub, int):
         category_sub_string=str(category_sub)
@@ -157,11 +130,12 @@ def get_gps_lat_lon(estate_raw: Dict) -> Tuple[str, str]:
     Parameters
     ----------
     estate_raw: Dict :
-        requested data in json
+        Requested data in json
         
     Returns
     -------
-    lat and log
+    Latitude and longitude of respective sreality offer.
+
     """
     gps_ = estate_raw['gps']
     return gps_['lat'], gps_['lon']
@@ -172,11 +146,12 @@ def get_flat_type_from_name(name: str) -> str:
     Parameters
     ----------
     name: str :
-        always represented by string "Prodej bytu [type of flat] [Area] m^2"
+        Always represented by string "Prodej bytu [type of flat] [Area] m^2"
 
     Returns
     -------
-    flat_type
+    Returns a string with apartment type.
+
     """
     return name.split()[2]
 
@@ -190,7 +165,7 @@ def get_area_from_name(name: str) -> int:
 
     Returns
     -------
-    area
+    Integer with area of the real estate in the respective offer.
     """
     if category_main == 1:
         name_ = name.split()
@@ -210,7 +185,8 @@ def get_company_details(estate_raw: Dict) -> Tuple[str, str]:
 
     Returns
     -------
-    company_details
+    Company ID and company name stored in respective json.
+
     """
     try:
             company_id = estate_raw["_embedded"]["company"]["id"]
@@ -228,11 +204,12 @@ def decode_collector(collector: list, category_main: int) -> pd.DataFrame:
 
     Parameters
     ----------
-    collector : the list list containing all requests as json
+    collector : list :
+        list containing all requests as json
 
     Returns
     -------
-    dataframe with decoded data
+    It returns pandas dataframe with decoded data.
     """
     estates_individual = {}
 
@@ -283,13 +260,14 @@ def download_re_offers(category_main: int,
 
     Parameters
     ----------
-    category_main : code of main real estate category
-                
-    category_type : code of real estate type
-        
-    category_sub : code of real estate category_sub 
-        
-    locality_region_id : indicator of locality_region
+    category_main : int :
+        code of main real estate main category
+    category_type : int : 
+        code of real estate type
+    category_sub : int :
+        code of real estate subcategory
+    locality_region_id : int :
+        indicator of region of the Czech Republic
         
     Returns
     -------
@@ -324,13 +302,16 @@ def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, ca
 
     Parameters
     ----------
-    df :  dataframe with decoded data
+    df :  pandas.DataFrame
+        dataframe with decoded real estate data
         
-    path_to_sqlite : string of path to sqlite database where table with offers is already stored
+    path_to_sqlite : str : 
+        path to sqlite database where table with offers is already stored
         
-    Returns (SQLite will be saved)
+    Returns 
     -------
-    nothing
+    Data will be saved to SQLite.
+
     """
     con = sqlite3.connect(path_to_sqlite) # We must choose the name for our DB !
 
@@ -357,25 +338,25 @@ def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, ca
     con.close()
 
 def get_re_offers(path_to_sqlite: str, category_main: str, category_type: str, 
-locality_region: Optional[Union[int, list]], category_sub: Optional[Union[int, list]]=None) -> None:
+locality_region: Optional[Union[str, list]], category_sub: Optional[Union[str, list]]=None) -> None:
     """
 
     Parameters
     ----------
-    path_to_sqlite : Path to sqlite database. If the database does not exist it will be created base on name and path provided.
-        
-    category_main : code of main real estate category
-                
-    category_type : code of real estate type
-        
-    category_sub : code of real estate category_sub 
-        
-    locality_region_id : indicator of locality_region
-        
+    path_to_sqlite : str :
+        Path to sqlite database. If the database does not exist it will be created base on name and path provided.
+    category_main : str :
+        Name of main real estate category (e.g., "apartments")
+    category_type : str : 
+        Name of real estate type (e.g., "sale").
+    category_sub : list, int : 
+        Name of real estate categories (e.g. "2+kk")
+    locality_region_id : list, int :
+        Name of region of the Czech Republic in Czech language (e.g., "Hlavní město Praha").
 
     Returns
     -------
-    nothing (SQLite will be saved)
+    Data is saved to SQLite database in folder specified by path_to_sqlite.
     """
     
     # inputs to further functions
@@ -467,12 +448,12 @@ locality_region: Optional[Union[int, list]], category_sub: Optional[Union[int, l
 
 # INPUTS
 #sleep(2)
-path_to_sqlite='estate_data.sqlite'
+#path_to_sqlite='estate_data.sqlite'
 
-category_main = "apartments" # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
-category_type = "sale" # 1=prodej, 2=nájem, 3=dražba
-category_sub = [] # 34=garáže, 52=garážové stání
-locality_region = ["Královéhradecký kraj"] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
+#category_main = "apartments" # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
+#category_type = "sale" # 1=prodej, 2=nájem, 3=dražba
+#category_sub = [] # 34=garáže, 52=garážové stání
+#locality_region = ["Královéhradecký kraj"] #10=Praha, 11=Středočeský kraj, 5: Liberecký kraj, 1: Českobudějovický kraj
 
 #category_main = 1 # 1=byty, 2=domy, 3=pozemky, 4=komerční, 5=ostatní
 #category_type = 1 # 1=prodej, 2=nájem, 3=dražba
