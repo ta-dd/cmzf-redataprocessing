@@ -88,14 +88,14 @@ def get_responses(urls, workers=5):
 
     Parameters
     ----------
-    urls :
+    urls : list of urls to APIs
         
     workers :
          (Default value = 5)
 
     Returns
     -------
-
+    output_list - list of requested data in json
     """
     loop = asyncio.get_event_loop()
     output_list = loop.run_until_complete(main(urls, workers))
