@@ -1,5 +1,4 @@
 
-
 # redataprocessing: tool for requesting, decoding and storing real estate data from Sreality API
 [![PyPI Latest Release](https://img.shields.io/pypi/v/pandas.svg)](https://pypi.org/project/pandas/)
 
@@ -17,6 +16,7 @@ Here are few functionalities of **redataprocessing**:
   - Decoding of requested jsons into `pandas DataFrame`
   - Functions for download of both list with offers and list with detailed description of downloaded offers
   - Asynchronous requesting of description data
+  - Storage of dataframes with offers and their description into `SQLite` database
 
 ## Where to get it
 The source code is currently hosted on GitHub at:
