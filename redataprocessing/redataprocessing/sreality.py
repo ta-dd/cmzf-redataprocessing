@@ -68,18 +68,18 @@ def download_lists(category_main: int, category_type: int, locality_region_id: O
 
     Parameters
     ----------
-    category_main :
+    category_main : code of main real estate category
+                
+    category_type : code of real estate type
         
-    category_type :
+    category_sub : code of real estate category_sub
         
-    category_sub :
-        
-    locality_region_id :
+    locality_region_id : indicator of locality_region
         
 
     Returns
     -------
-
+    collertor which is the list list containing all requests as json
     """
 
 
@@ -157,10 +157,11 @@ def get_gps_lat_lon(estate_raw: Dict) -> Tuple[str, str]:
     Parameters
     ----------
     estate_raw: Dict :
+        requested data in json
         
     Returns
     -------
-
+    lat and log
     """
     gps_ = estate_raw['gps']
     return gps_['lat'], gps_['lon']
@@ -171,11 +172,11 @@ def get_flat_type_from_name(name: str) -> str:
     Parameters
     ----------
     name: str :
-        
+        always represented by string "Prodej bytu [type of flat] [Area] m^2"
 
     Returns
     -------
-
+    flat_type
     """
     return name.split()[2]
 
@@ -185,11 +186,11 @@ def get_area_from_name(name: str) -> int:
     Parameters
     ----------
     name: str :
-        
+        always represented by string "Prodej bytu [type of flat] [Area] m^2"
 
     Returns
     -------
-
+    area
     """
     if category_main == 1:
         name_ = name.split()
@@ -205,11 +206,11 @@ def get_company_details(estate_raw: Dict) -> Tuple[str, str]:
     Parameters
     ----------
     estate_raw: Dict :
-        
+        requested data in json
 
     Returns
     -------
-
+    company_details
     """
     try:
             company_id = estate_raw["_embedded"]["company"]["id"]
@@ -227,12 +228,11 @@ def decode_collector(collector: list, category_main: int) -> pd.DataFrame:
 
     Parameters
     ----------
-    collector :
-        
+    collector : the list list containing all requests as json
 
     Returns
     -------
-
+    dataframe with decoded data
     """
     estates_individual = {}
 
@@ -283,17 +283,17 @@ def download_re_offers(category_main: int,
 
     Parameters
     ----------
-    category_main :
+    category_main : code of main real estate category
+                
+    category_type : code of real estate type
         
-    category_type :
+    category_sub : code of real estate category_sub 
         
-    category_sub :
-        
-    locality_region_id :
+    locality_region_id : indicator of locality_region
         
     Returns
     -------
-
+    dataframe with decoded data
     """
 
     category_main_input=category_main
@@ -324,14 +324,13 @@ def save_re_offers(df: pd.DataFrame, path_to_sqlite: str, category_main: int, ca
 
     Parameters
     ----------
-    df :
+    df :  dataframe with decoded data
         
-    path_to_sqlite :
+    path_to_sqlite : string of path to sqlite database where table with offers is already stored
         
-
-    Returns
+    Returns (SQLite will be saved)
     -------
-
+    nothing
     """
     con = sqlite3.connect(path_to_sqlite) # We must choose the name for our DB !
 
@@ -363,20 +362,20 @@ locality_region: Optional[Union[int, list]], category_sub: Optional[Union[int, l
 
     Parameters
     ----------
-    path_to_sqlite :
-        Path to sqlite database. If the database does not exist it will be created base on name and path provided.
-    category_main :
+    path_to_sqlite : Path to sqlite database. If the database does not exist it will be created base on name and path provided.
         
-    category_type :
+    category_main : code of main real estate category
+                
+    category_type : code of real estate type
         
-    category_sub :
+    category_sub : code of real estate category_sub 
         
-    locality_region_id :
+    locality_region_id : indicator of locality_region
         
 
     Returns
     -------
-
+    nothing (SQLite will be saved)
     """
     
     # inputs to further functions

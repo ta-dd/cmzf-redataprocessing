@@ -97,12 +97,11 @@ def urls_from_indices(indices:list) -> list:
 
     Parameters
     ----------
-    indices :
+    indices : list of hash_ids
         
-
     Returns
     -------
-
+    urls - list of urls to APIs
     """
     urls=["https://www.sreality.cz/api/cs/v2/estates/"+str(i) for i in indices]
     return urls
@@ -115,11 +114,11 @@ def note_missing_values(r_dict_names_all:Dict):
 
     Parameters
     ----------
-    r_dict_names_all :
+    r_dict_names_all : dictionary with Czech and English column names to be scrapped
         
     Returns
     -------
-
+    nothing (prints the missing values whcich could be added to dictionary and be scrapped)
     """
     print("Add these values to description_items_dict in sreality_api_dictionaries.py:")
     print(r_dict_names_all[~r_dict_names_all.isin(description_items_dict.keys())])
@@ -129,12 +128,11 @@ def individual_description_into_pd_df(description_individual) -> pd.DataFrame:
 
     Parameters
     ----------
-    description_individual :
-        
+    description_individual :    
 
     Returns
     -------
-
+    dataframe
     """
     df_desc = pd.concat(description_individual).unstack()
     df_desc["equipped"]=df_desc["equipped"].map({True: "ano", False: "ne", "Částečně":"částečně"}) 
@@ -150,10 +148,9 @@ def description_decoding(responses_list: list) -> pd.DataFrame:
     ----------
     responses_list : list : list of responses of real estate descriptions downloaded from sreality
     
-
     Returns
     -------
-
+    decoded dataframe
     """
         
     description_individual = {}
@@ -211,12 +208,11 @@ def transformer(value) -> str:
 
     Parameters
     ----------
-    value :
-        
+    value : value to be transformed        
 
     Returns
     -------
-
+    string sperating the values with double spaces
     """
     if type(value) == list:
         string = ""
@@ -229,18 +225,18 @@ def save_to_db(df: pd.DataFrame, path_to_sqlite: str, category_main: int, catego
 
     Parameters
     ----------
-    df : pandas data frame : 
+    df : pandas data frame : dataframe to be saved
         
     path_to_sqlite : str : 
         path to sqlite database where the dataframe will be stored
         
-    category_main : int :
+    category_main : int : code of main real estate category
 
-    category_type : int : 
+    category_type : int : code of real estate type
 
     Returns
     -------
-
+    nothing (SQLite will be saved)
     """
     
     for column in columns_w_list:
