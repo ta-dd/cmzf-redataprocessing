@@ -52,9 +52,10 @@ def get_responses(urls: list, workers:int=5) -> list:
 
     Parameters
     ----------
-    urls : list of urls to APIs
+    urls : list :
+        list of urls to API
         
-    workers :
+    workers : int :
          (Default value = 5)
 
     Returns
