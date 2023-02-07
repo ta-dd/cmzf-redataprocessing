@@ -1,8 +1,8 @@
-"""Example NumPy style docstrings.
+"""Asynchronous download of description of sreality offers.
 
-This module demonstrates documentation as specified by the `NumPy
-Documentation HOWTO`_. Docstrings may extend over multiple lines. Sections
-are created with a section header followed by an underline of equal length.
+This module contains async functions for asynchronous requesting of
+description data of offers that were already downloaded from sreality
+based on their ids.
 
 Example
 -------
