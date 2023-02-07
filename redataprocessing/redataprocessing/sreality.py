@@ -171,7 +171,7 @@ def get_flat_type_from_name(name: str) -> str:
     Parameters
     ----------
     name: str :
-        
+        always represented by string "Prodej bytu [type of flat] [Area] m^2"
 
     Returns
     -------
@@ -185,7 +185,7 @@ def get_area_from_name(name: str) -> int:
     Parameters
     ----------
     name: str :
-        
+        always represented by string "Prodej bytu [type of flat] [Area] m^2"
 
     Returns
     -------
