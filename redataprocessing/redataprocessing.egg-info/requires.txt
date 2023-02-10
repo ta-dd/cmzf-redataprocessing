@@ -1,14 +1,10 @@
 pandas
 numpy
-sqlite3
 certifi
 aiohttp
-asyncio
 certifi
 nest_asyncio
 requests
-re
-random
-sys
 tqdm
 typing
+asyncio
