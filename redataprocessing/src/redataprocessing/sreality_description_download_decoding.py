@@ -48,7 +48,7 @@ import sqlite3
 
 from typing import Dict
 
-from tqdm.auto import tqdm
+from tqdm.autonotebook import tqdm
 
 from redataprocessing.sreality_api_dictionaries import *
 from redataprocessing.sreality_description_asyncio import *
@@ -109,7 +109,7 @@ def urls_from_indices(indices:list) -> list:
 # %%
 # preparation of functions for decoding
 
-def note_missing_values(r_dict_names_all:Dict):
+def note_missing_values(r_dict_names_all:Dict) -> None:
     """
 
     Parameters
@@ -118,10 +118,13 @@ def note_missing_values(r_dict_names_all:Dict):
         
     Returns
     -------
-    nothing (prints the missing values whcich could be added to dictionary and be scrapped)
+    nothing (prints the missing values which could be added to dictionary and be scrapped)
     """
-    print("Add these values to description_items_dict in sreality_api_dictionaries.py:")
-    print(r_dict_names_all[~r_dict_names_all.isin(description_items_dict.keys())])
+    if  len(r_dict_names_all[~r_dict_names_all.isin(description_items_dict.keys())])>0:
+        print("Add these values to description_items_dict in sreality_api_dictionaries.py:")
+        print(r_dict_names_all[~r_dict_names_all.isin(description_items_dict.keys())])
+    else:
+        return None
 
 def individual_description_into_pd_df(description_individual) -> pd.DataFrame:
     """

@@ -27,7 +27,7 @@ from datetime import date
 from time import sleep 
 from random import randint
 
-from tqdm.auto import tqdm
+from tqdm.autonotebook import tqdm
 
 from typing import Dict, Union, Optional, Tuple
 import re 
@@ -227,7 +227,7 @@ def decode_collector(collector: list, category_main: int) -> pd.DataFrame:
             estate_relevant['price_czk'] = int(estate['price_czk']["value_raw"])
             estate_relevant['price_czk_unit'] = estate['price_czk']["unit"]
             estate_relevant['price_czk_name'] = estate['price_czk']["name"]
-            estate_relevant['area'] = get_area_from_name(estate['name'], category_main)
+            estate_relevant['area'] = get_area_from_name(estate['name'], category_main=category_main)
 
             lat, lon = get_gps_lat_lon(estate)
             estate_relevant.loc['lat'] = lat
