@@ -48,7 +48,7 @@ import sqlite3
 
 from typing import Dict
 
-from tqdm.autonotebook import tqdm
+from tqdm.auto import tqdm
 
 from redataprocessing.sreality_api_dictionaries import *
 from redataprocessing.sreality_description_asyncio import *

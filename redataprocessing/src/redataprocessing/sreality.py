@@ -27,7 +27,7 @@ from datetime import date
 from time import sleep 
 from random import randint
 
-from tqdm.autonotebook import tqdm
+from tqdm.auto import tqdm
 
 from typing import Dict, Union, Optional, Tuple
 import re 
