@@ -155,14 +155,17 @@ def get_flat_type_from_name(name: str) -> str:
     """
     return name.split()[2]
 
-def get_area_from_name(name: str) -> int:
+def get_area_from_name(name: str, category_main: int) -> int:
     """
 
     Parameters
     ----------
     name: str :
         always represented by string "Prodej bytu [type of flat] [Area] m^2"
-
+    
+    category_main: int :
+        code of main real estate category
+        
     Returns
     -------
     Integer with area of the real estate in the respective offer.
@@ -222,7 +225,7 @@ def decode_collector(collector: list, category_main: int) -> pd.DataFrame:
             estate_relevant['price_czk'] = int(estate['price_czk']["value_raw"])
             estate_relevant['price_czk_unit'] = estate['price_czk']["unit"]
             estate_relevant['price_czk_name'] = estate['price_czk']["name"]
-            estate_relevant['area'] = get_area_from_name(estate['name'])
+            estate_relevant['area'] = get_area_from_name(estate['name'], category_main = category_main)
 
             lat, lon = get_gps_lat_lon(estate)
             estate_relevant.loc['lat'] = lat
