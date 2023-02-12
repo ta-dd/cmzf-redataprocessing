@@ -1,4 +1,4 @@
-import redataprocessing.sreality
+import redataprocessing
 
 get_re_offers(path_to_sqlite="estate_data.sqlite", 
 category_main="apartments", 
