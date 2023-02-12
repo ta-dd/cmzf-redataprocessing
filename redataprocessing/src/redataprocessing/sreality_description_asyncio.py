@@ -40,7 +40,8 @@ async def main(urls: list, chunk_size: int) -> list:
             #here they come together
             responses = await asyncio.gather(*tasks)
 
-            print(f'downloaded description of offers: {(chunk_idx+1)*chunk_size} out of {len(urls)}')
+            finished_count=min(((chunk_idx+1)*chunk_size), len(urls))
+            print(f'downloaded description of offers: {finished_count} out of {len(urls)}')
             
             #here we sqlite can be used
             #to name each observation you could use: response["_embedded"]["favourite"]["_links"]["self"]["href"][17:]

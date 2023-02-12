@@ -266,7 +266,7 @@ def save_to_db(df: pd.DataFrame, path_to_sqlite: str, category_main: int, catego
     # Closing the connection
     con.close()
 
-def get_re_offers_description(path_to_sqlite: str, category_main: int, category_type: int):
+def get_re_offers_description(path_to_sqlite: str, category_main: int, category_type: int) -> None:
     """
 
     Parameters
@@ -292,6 +292,10 @@ def get_re_offers_description(path_to_sqlite: str, category_main: int, category_
     indices=getting_offers_without_downloaded_description(path_to_sqlite=path_to_sqlite_input, 
     category_main=category_main_input, 
     category_type=category_type_input)
+
+    if len(indices)==0:
+        print("all descriptions of offers already loaded")
+        return None
 
     urls=urls_from_indices(indices)
     output_list=get_responses(urls, workers=20)
