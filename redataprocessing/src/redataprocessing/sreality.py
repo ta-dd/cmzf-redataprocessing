@@ -25,7 +25,7 @@ import os
 
 from datetime import date
 from time import sleep 
-from random import randint
+from random import randint, choice
 
 from tqdm.auto import tqdm
 
@@ -85,6 +85,30 @@ def download_lists(category_main: int, category_type: int, locality_region_id: O
             "category_type_cb":category_type,
             "per_page":60,
             "page":i}
+        
+        user_agent_list = [
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/80.0.361.69 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0",
+            "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.2 Safari/605.1.15"
+        ]
+        user_agent = choice(user_agent_list)
+
+        headers = {
+            # "Accept": "text/html.application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng*/*;q=0.8,application/signed-exchage;v=b3'q=0.9", 
+            # "Accept-Encoding": "gzip, deflate, br", 
+            # "Accept-Language": "en-GB,en;q=0.9", 
+            # "Dnt": "1", 
+            # "Host": "privacy.nehnutelnosti.sk", 
+            # "Upgrade-Insecure-Requests": "1", 
+            "User-Agent": user_agent 
+        }
 
         if len(locality_region_id)>0:
             params=params|{"locality_region_id":locality_region_id_string}
@@ -92,7 +116,7 @@ def download_lists(category_main: int, category_type: int, locality_region_id: O
         if len(category_sub)>0:
             params=params|{"category_sub_cb":category_sub_string}
 
-        r = requests.get(base_url, params=params, verify= True)
+        r = requests.get(base_url, params=params, verify= True, headers=headers)
 
         print("starting sleep")
         sleep(randint(1,3))
@@ -417,7 +441,7 @@ locality_region: Optional[Union[str, list]], category_sub: Optional[Union[str, l
     
     if isinstance(path_to_sqlite, str):
         if os.path.dirname(path_to_sqlite)=="":
-            print("resulting data will be saved to current working directory ({})".format(os. getcwd()))
+            print("resulting data will be saved to current working directory ({})".format(os.getcwd()))
             path_to_sqlite_input=path_to_sqlite
         elif os.path.exists(os.path.dirname(path_to_sqlite)):
             path_to_sqlite_input=path_to_sqlite
