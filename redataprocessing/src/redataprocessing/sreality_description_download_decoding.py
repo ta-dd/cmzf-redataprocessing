@@ -202,7 +202,6 @@ def description_decoding(responses_list: list) -> pd.DataFrame:
 
     return df_final
 
-# %% [markdown]
 # save of description data to SQLite
 
 # We transform columns with list so we could save to DB

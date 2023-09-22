@@ -211,14 +211,6 @@ def get_area_from_name(name: str) -> int:
 
     return int(final_output)
 
-    #if category_main == 1:
-    #    name_ = name.split()
-    #    return int(''.join(re.findall('(\d*)', ''.join(name_[3:]))))
-    #else:
-    #    name_ = re.sub("m2", "", name)
-    #    name_ = name_.split()
-    #    return int(''.join(re.findall('(\d*)', ''.join(name_))))
-
 def get_company_details(estate_raw: Dict) -> Tuple[str, str]:
     """
 
