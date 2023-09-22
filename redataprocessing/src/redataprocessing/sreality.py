@@ -37,7 +37,7 @@ from redataprocessing.sreality_description_download_decoding import *
 
 # requesting information from sreality api
 
-def download_lists(category_main: int, category_type: int, locality_region_id: Optional[Union[int, list]], category_sub: Optional[Union[int, list]]=None) -> list:
+def download_lists(category_main: int, category_type: int, locality_region_id: Optional[Union[int, list]]=None, category_sub: Optional[Union[int, list]]=None) -> list:
     """
 
     Parameters
@@ -55,15 +55,19 @@ def download_lists(category_main: int, category_type: int, locality_region_id: O
     -------
     This function returns a collector which is a list containing all requests as json.
     """
-
-    if isinstance(category_sub, int):
+    
+    if category_sub==None: 
+        category_sub_string = ""
+    elif isinstance(category_sub, int):
         category_sub_string=str(category_sub)
     elif isinstance(category_sub, list):
         category_sub_string = '%7C'.join(str(v) for v in category_sub)
     else:
         raise TypeError("category_sub: must be an integer or a list")
     
-    if isinstance(locality_region_id, int):
+    if locality_region_id==None: 
+        locality_region_id_string = ""
+    elif isinstance(locality_region_id, int):
         locality_region_id_string=str(locality_region_id)
     elif isinstance(locality_region_id, list):
         locality_region_id_string = '%7C'.join(str(v) for v in locality_region_id)
@@ -110,10 +114,10 @@ def download_lists(category_main: int, category_type: int, locality_region_id: O
             "User-Agent": user_agent 
         }
 
-        if len(locality_region_id)>0:
+        if len(locality_region_id_string)>0:
             params=params|{"locality_region_id":locality_region_id_string}
             
-        if len(category_sub)>0:
+        if len(category_sub_string)>0:
             params=params|{"category_sub_cb":category_sub_string}
 
         r = requests.get(base_url, params=params, verify= True, headers=headers)
@@ -179,7 +183,7 @@ def get_flat_type_from_name(name: str) -> str:
     """
     return name.split()[2]
 
-def get_area_from_name(name: str, category_main: int) -> int:
+def get_area_from_name(name: str) -> int:
     """
 
     Parameters
@@ -194,13 +198,26 @@ def get_area_from_name(name: str, category_main: int) -> int:
     -------
     Integer with area of the real estate in the respective offer.
     """
-    if category_main == 1:
-        name_ = name.split()
-        return int(''.join(re.findall('(\d*)', ''.join(name_[3:]))))
-    else:
-        name_ = re.sub("m2", "", name)
-        name_ = name_.split()
-        return int(''.join(re.findall('(\d*)', ''.join(name_))))
+    # Define the regular expression pattern
+    
+    pattern = r'\d+\xa0m²'
+    # Use re.findall to find all occurrences of the pattern in the string
+    first_output = re.findall(pattern, name)[0]
+
+    # Define the regular expression pattern
+    pattern = r'\d+'
+    # Use re.findall to find all occurrences of the pattern in the string
+    final_output = re.findall(pattern, first_output)[0]
+
+    return int(final_output)
+
+    #if category_main == 1:
+    #    name_ = name.split()
+    #    return int(''.join(re.findall('(\d*)', ''.join(name_[3:]))))
+    #else:
+    #    name_ = re.sub("m2", "", name)
+    #    name_ = name_.split()
+    #    return int(''.join(re.findall('(\d*)', ''.join(name_))))
 
 def get_company_details(estate_raw: Dict) -> Tuple[str, str]:
     """
@@ -251,7 +268,7 @@ def decode_collector(collector: list, category_main: int) -> pd.DataFrame:
             estate_relevant['price_czk'] = int(estate['price_czk']["value_raw"])
             estate_relevant['price_czk_unit'] = estate['price_czk']["unit"]
             estate_relevant['price_czk_name'] = estate['price_czk']["name"]
-            estate_relevant['area'] = get_area_from_name(estate['name'], category_main=category_main)
+            estate_relevant['area'] = get_area_from_name(estate['name'])
 
             lat, lon = get_gps_lat_lon(estate)
             estate_relevant.loc['lat'] = lat
