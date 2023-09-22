@@ -266,8 +266,6 @@ def decode_collector(collector: list, category_main: int) -> pd.DataFrame:
             estate_relevant.loc['lat'] = lat
             estate_relevant.loc['lon'] = lon
             estate_relevant['locality'] = estate['locality']
-            if category_main == 1:
-                estate_relevant['apartment_type'] = get_flat_type_from_name(estate['name'])
             estate_relevant['is_auction'] = estate['is_auction']
             estate_relevant['exclusively_at_rk'] = estate['exclusively_at_rk']
 

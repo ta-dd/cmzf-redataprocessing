@@ -20,7 +20,7 @@ from redataprocessing.sreality_api_dictionaries import *
 from redataprocessing.sreality_description_download_decoding import *
 from redataprocessing.sreality import *
 
-#collector=download_lists(category_main=1, category_type=2, locality_region_id=2)
+collector=download_lists(category_main=1, category_type=2, locality_region_id=2)
 
 #category_main=1
 #category_main_input=category_main
@@ -33,5 +33,6 @@ from redataprocessing.sreality import *
 #estate=r['_embedded']['estates'][1]
 #estate["name"]
 #collector.items()[]
+
 
 
