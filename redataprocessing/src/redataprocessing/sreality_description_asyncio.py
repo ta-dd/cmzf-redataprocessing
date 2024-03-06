@@ -68,6 +68,7 @@ async def main(urls: list, chunk_size: int) -> list:
             # to name each observation you could use: response["_embedded"]["favourite"]["_links"]["self"]["href"][17:]
             all_responses = all_responses + responses
         return all_responses  # returns list
+        # TODO i can save the list with all raw responses, on a weekly basis, into a db?
 
 
 def get_responses(urls: list, workers: int = 5) -> list:
