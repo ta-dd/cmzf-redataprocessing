@@ -193,6 +193,16 @@ def description_decoding(responses_list: list) -> pd.DataFrame:
                 info_relevant = pd.Series(dtype="object")
                 info_relevant["description"] = r_dict["text"]["value"]
 
+                # Get name of company
+                premise_name = (
+                    r_dict.get("_embedded", {})
+                    .get("seller", {})
+                    .get("_embedded", {})
+                    .get("premise", {})
+                    .get("name", np.nan)
+                )
+                info_relevant["seller_premise_name"] = premise_name
+
                 r_dict_values = pd.DataFrame(
                     r_dict["items"], columns=["type", "name", "value"]
                 )
