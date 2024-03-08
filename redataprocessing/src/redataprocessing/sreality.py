@@ -557,6 +557,8 @@ def get_re_offers(
         category_type=category_type_input,
     )
 
+    return db_table_name
+
 
 # INPUTS
 # sleep(2)
