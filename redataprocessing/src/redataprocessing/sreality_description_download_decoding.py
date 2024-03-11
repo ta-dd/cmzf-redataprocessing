@@ -158,9 +158,9 @@ def individual_description_into_pd_df(description_individual) -> pd.DataFrame:
     dataframe
     """
     df_desc = pd.concat(description_individual).unstack()
-    df_desc["equipped"] = df_desc["equipped"].map(
-        {True: "ano", False: "ne", "Částečně": "částečně"}
-    )
+    # df_desc["equipped"] = df_desc["equipped"].map(
+    #     {True: "ano", False: "ne", "Částečně": "částečně"}
+    # )
     df_desc.reset_index(inplace=True)
     df_desc = df_desc.rename(columns={"index": "hash_id"})
     return df_desc
@@ -178,6 +178,8 @@ def description_decoding(responses_list: list) -> pd.DataFrame:
     -------
     decoded dataframe
     """
+
+    # TODO ukladat do databaze i raw responses list? nebo spis ukladat raw offers misto raw descriptions, protoze descs stahujeme jen jednou? ale zas mozna proto jsou descs lepsi
 
     description_individual = {}
     r_dict_names_all = pd.Series(dtype="object")
@@ -201,7 +203,7 @@ def description_decoding(responses_list: list) -> pd.DataFrame:
                     .get("premise", {})
                     .get("name", np.nan)
                 )
-                info_relevant["seller_premise_name"] = premise_name
+                info_relevant["nazev_rk"] = premise_name
 
                 r_dict_values = pd.DataFrame(
                     r_dict["items"], columns=["type", "name", "value"]
@@ -225,26 +227,36 @@ def description_decoding(responses_list: list) -> pd.DataFrame:
                     ]
                 )
 
-                for name_raw in description_items_dict.keys():
+                # Assuming r_dict_values is a DataFrame created from r_dict["items"]
+                r_dict_names_present = r_dict_values[
+                    "name"
+                ].unique()  # Get unique names directly from the response
 
-                    name_clean = description_items_dict[name_raw]
+                for name_raw in r_dict_names_present:
+                    if (
+                        name_raw in description_items_dict
+                    ):  # Check if the raw name is described in dictionary
+                        name_clean = description_items_dict[name_raw]
 
-                    if name_raw not in r_dict_names.values:
-                        info_relevant[name_clean] = np.nan
-                    elif r_dict_values[r_dict_names == name_raw]["type"].all() == "set":
-                        index_nr = int(
-                            r_dict_values.index[
+                        # Logic to assign values to info_relevant[name_clean] as before
+                        # This part remains largely the same but is only executed for names found in the response
+                        if (
+                            r_dict_values[r_dict_names == name_raw]["type"].all()
+                            == "set"
+                        ):
+                            index_nr = int(
+                                r_dict_values.index[
+                                    r_dict_values["name"] == name_raw
+                                ].tolist()[0]
+                            )
+                            info_relevant[name_clean] = r_dict_values["value"][
                                 r_dict_values["name"] == name_raw
-                            ].tolist()[0]
-                        )
-                        info_relevant[name_clean] = r_dict_values["value"][
-                            r_dict_values["name"] == name_raw
-                        ][index_nr][0]["value"].values[0]
-                        del index_nr
-                    else:
-                        info_relevant[name_clean] = r_dict_values["value"][
-                            r_dict_values["name"] == name_raw
-                        ].values[0]
+                            ][index_nr][0]["value"].values[0]
+                            del index_nr
+                        else:
+                            info_relevant[name_clean] = r_dict_values["value"][
+                                r_dict_values["name"] == name_raw
+                            ].values[0]
 
                 description_individual[
                     r_dict["_embedded"]["favourite"]["_links"]["self"]["href"][17:]

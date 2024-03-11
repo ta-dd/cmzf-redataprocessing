@@ -149,6 +149,8 @@ description_items_dict = {
     "Sklep": "cellar",
     "Datum ukončení výstavby": "date_development_completion",
     "Balkón": "balcony",
+    "Dražební jistota": "drazebni_jistota",
+    "Počet vlastníků": "pocet_vlastniku",
 }
 
 columns_w_list = [
