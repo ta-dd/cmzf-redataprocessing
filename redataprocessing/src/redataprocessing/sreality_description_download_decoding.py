@@ -42,6 +42,7 @@ module_level_variable1 : int
 
 """
 
+from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 import sqlite3
@@ -163,6 +164,16 @@ def individual_description_into_pd_df(description_individual) -> pd.DataFrame:
     # )
     df_desc.reset_index(inplace=True)
     df_desc = df_desc.rename(columns={"index": "hash_id"})
+    # Convert "Včera" and "Dnes" to corresponding dates
+    today = datetime.now().date()
+    yesterday = today - timedelta(days=1)
+    df_desc["date_update"] = df_desc["date_update"].apply(
+        lambda x: (
+            yesterday.strftime("%d.%m.%Y")
+            if x == "Včera"
+            else today.strftime("%d.%m.%Y") if x == "Dnes" else x
+        )
+    )
     return df_desc
 
 
@@ -261,6 +272,7 @@ def description_decoding(responses_list: list) -> pd.DataFrame:
                 description_individual[
                     r_dict["_embedded"]["favourite"]["_links"]["self"]["href"][17:]
                 ] = info_relevant
+
             except:
                 print(
                     "Something wrong. I guess, the offer disappeared just a moment ago."
