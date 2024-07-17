@@ -34,6 +34,8 @@ import re
 
 from redataprocessing.sreality_api_dictionaries import *
 from redataprocessing.sreality_description_download_decoding import *
+from redataprocessing.common import *
+
 
 # requesting information from sreality api
 
@@ -306,6 +308,7 @@ def decode_collector(collector: list, category_main: int) -> pd.DataFrame:
 
 
 # creating ultimated function for downloading and transforming into pandas df
+@retry(tries=5)
 def download_re_offers(
     category_main: int,
     category_type: int,

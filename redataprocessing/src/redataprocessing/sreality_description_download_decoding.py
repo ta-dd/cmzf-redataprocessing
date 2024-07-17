@@ -53,6 +53,7 @@ from tqdm.auto import tqdm
 
 from redataprocessing.sreality_api_dictionaries import *
 from redataprocessing.sreality_description_asyncio import *
+from redataprocessing.common import *
 
 
 # preparation of urls for async
@@ -366,6 +367,7 @@ def save_to_db(
     con.close()
 
 
+@retry(tries=5)
 def get_re_offers_description(
     path_to_sqlite: str, category_main: int, category_type: int
 ) -> None:
